@@ -11,11 +11,13 @@ const TaskList = () => {
 
   const fetchTasks = async () => {  
     try {  
+      setLoading(true); // Set loading to true before fetching  
+      setError(null); // Reset error state  
       const response = await api.get('/tasks/'); // Fetch tasks from the API  
       setTasks(response.data); // Set the tasks state with the fetched data  
     } catch (err) {  
       console.error('Failed to fetch tasks:', err);  
-      setError('Failed to fetch tasks'); // Set an error message  
+      setError('Failed to fetch tasks. Please check your connection or try again.'); // Set a user-friendly error message  
     } finally {  
       setLoading(false); // Stop the loading spinner  
     }  
@@ -30,7 +32,31 @@ const TaskList = () => {
   }  
 
   if (error) {  
-    return <Typography color="error">{error}</Typography>; // Show an error message if fetching fails  
+    return (  
+      <Box padding={4} textAlign="center">  
+        <Typography color="error" variant="h6" gutterBottom>  
+          {error}  
+        </Typography>  
+        <Box marginTop={2}>  
+          {/* Options for the user when an error occurs */}  
+          <Button  
+            variant="contained"  
+            color="primary"  
+            onClick={fetchTasks} // Retry fetching tasks  
+            style={{ marginRight: '10px' }}  
+          >  
+            Try Again  
+          </Button>  
+          <Button  
+            variant="outlined"  
+            color="secondary"  
+            onClick={() => navigate('/')} // Navigate back to the login page  
+          >  
+            Back to Start  
+          </Button>  
+        </Box>  
+      </Box>  
+    );  
   }  
 
   return (  
