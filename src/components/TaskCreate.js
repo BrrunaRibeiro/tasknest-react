@@ -1,32 +1,46 @@
 import React, { useState } from 'react';  
+import styles from '../styles/TaskCreate.module.css'; // Import the CSS module  
+import { Box, Typography, TextField, Button } from '@mui/material';  
 
 const TaskCreate = () => {  
-  const [task, setTask] = useState('');  
+  const [title, setTitle] = useState('');  
+  const [description, setDescription] = useState('');  
 
-  const handleCreateTask = (e) => {  
+  const handleSubmit = (e) => {  
     e.preventDefault();  
-
-    // Simulate task creation logic  
-    alert(`Task created: ${task}`);  
-    setTask('');  
+    console.log('Task Created:', { title, description });  
+    // Add API call to create a task  
   };  
 
   return (  
-    <div style={{ marginTop: '50px', textAlign: 'center' }}>  
-      <h1>Create Task</h1>  
-      <form onSubmit={handleCreateTask}>  
-        <input  
-          type="text"  
-          placeholder="Task Name"  
-          value={task}  
-          onChange={(e) => setTask(e.target.value)}  
-          style={{ padding: '10px', fontSize: '16px', marginRight: '10px' }}  
+    <Box className={styles.container}>  
+      <Typography variant="h4" className={styles.title}>  
+        Create a New Task  
+      </Typography>  
+      <form onSubmit={handleSubmit} className={styles.form}>  
+        <TextField  
+          label="Task Title"  
+          variant="outlined"  
+          fullWidth  
+          value={title}  
+          onChange={(e) => setTitle(e.target.value)}  
+          className={styles.input}  
         />  
-        <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>  
-          Create  
-        </button>  
+        <TextField  
+          label="Task Description"  
+          variant="outlined"  
+          fullWidth  
+          multiline  
+          rows={4}  
+          value={description}  
+          onChange={(e) => setDescription(e.target.value)}  
+          className={styles.input}  
+        />  
+        <Button type="submit" variant="contained" color="primary" className={styles.button}>  
+          Create Task  
+        </Button>  
       </form>  
-    </div>  
+    </Box>  
   );  
 };  
 

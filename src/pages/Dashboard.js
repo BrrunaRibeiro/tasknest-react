@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';  
 import api from '../api/axiosConfig';  
+import styles from '../styles/Dashboard.module.css'; // Correct CSS module path  
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';  
 
 const Dashboard = () => {  
@@ -19,17 +20,23 @@ const Dashboard = () => {
   }, []);  
 
   return (  
-    <Box padding={4}>  
-      <Typography variant="h4" gutterBottom>  
-        Task Dashboards  
+    <Box className={styles.container}>  
+      <Typography variant="h4" className={styles.title}>  
+        Task Dashboard  
       </Typography>  
-      <List>  
-        {tasks.map((task) => (  
-          <ListItem key={task.id}>  
-            <ListItemText primary={task.title} secondary={task.description} />  
-          </ListItem>  
-        ))}  
-      </List>  
+      {tasks.length === 0 ? (  
+        <Typography className={styles.noTasksMessage}>  
+          No tasks available. Start by creating a new task!  
+        </Typography>  
+      ) : (  
+        <List className={styles.taskList}>  
+          {tasks.map((task) => (  
+            <ListItem key={task.id} className={styles.taskItem}>  
+              <ListItemText primary={task.title} secondary={task.description} />  
+            </ListItem>  
+          ))}  
+        </List>  
+      )}  
     </Box>  
   );  
 };  

@@ -1,57 +1,48 @@
 import React, { useEffect, useState } from 'react';  
 import { useNavigate } from 'react-router-dom';  
 import api from '../api/axiosConfig';  
+import styles from '../styles/TaskList.module.css'; // Import the CSS module  
 import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';  
 
 const TaskList = () => {  
-  const [tasks, setTasks] = useState([]); // Initialize tasks as an empty array  
-  const [loading, setLoading] = useState(true); // Add a loading state  
-  const [error, setError] = useState(null); // Add an error state  
-  const navigate = useNavigate(); // For navigation  
+  const [tasks, setTasks] = useState([]);  
+  const [loading, setLoading] = useState(true);  
+  const [error, setError] = useState(null);  
+  const navigate = useNavigate();  
 
   const fetchTasks = async () => {  
     try {  
-      setLoading(true); // Set loading to true before fetching  
-      setError(null); // Reset error state  
-      const response = await api.get('/tasks/'); // Fetch tasks from the API  
-      setTasks(response.data); // Set the tasks state with the fetched data  
+      setLoading(true);  
+      setError(null);  
+      const response = await api.get('/tasks/');  
+      setTasks(response.data);  
     } catch (err) {  
       console.error('Failed to fetch tasks:', err);  
-      setError('Failed to fetch tasks. Please check your connection or try again.'); // Set a user-friendly error message  
+      setError('Failed to fetch tasks. Please check your connection or try again.');  
     } finally {  
-      setLoading(false); // Stop the loading spinner  
+      setLoading(false);  
     }  
   };  
 
   useEffect(() => {  
-    fetchTasks(); // Fetch tasks when the component mounts  
+    fetchTasks();  
   }, []);  
 
   if (loading) {  
-    return <Typography>Loading tasks...</Typography>; // Show a loading message while fetching  
+    return <Typography className={styles.loading}>Loading tasks...</Typography>;  
   }  
 
   if (error) {  
     return (  
-      <Box padding={4} textAlign="center">  
-        <Typography color="error" variant="h6" gutterBottom>  
+      <Box className={styles.errorContainer}>  
+        <Typography className={styles.errorMessage} variant="h6" gutterBottom>  
           {error}  
         </Typography>  
-        <Box marginTop={2}>  
-          {/* Options for the user when an error occurs */}  
-          <Button  
-            variant="contained"  
-            color="primary"  
-            onClick={fetchTasks} // Retry fetching tasks  
-            style={{ marginRight: '10px' }}  
-          >  
+        <Box className={styles.buttonGroup}>  
+          <Button variant="contained" color="primary" onClick={fetchTasks}>  
             Try Again  
           </Button>  
-          <Button  
-            variant="outlined"  
-            color="secondary"  
-            onClick={() => navigate('/')} // Navigate back to the login page  
-          >  
+          <Button variant="outlined" color="secondary" onClick={() => navigate('/')}>  
             Back to Start  
           </Button>  
         </Box>  
@@ -60,36 +51,26 @@ const TaskList = () => {
   }  
 
   return (  
-    <Box padding={4}>  
-      <Typography variant="h4" gutterBottom>  
+    <Box className={styles.container}>  
+      <Typography variant="h4" className={styles.title}>  
         Task List  
       </Typography>  
-      {tasks.length === 0 ? ( // Check if there are no tasks  
-        <Box>  
-          <Typography>No tasks available</Typography>  
-          <Box marginTop={2}>  
-            {/* Options for the user */}  
-            <Button  
-              variant="contained"  
-              color="primary"  
-              onClick={() => navigate('/tasks/create')} // Navigate to the TaskCreate page  
-              style={{ marginRight: '10px' }}  
-            >  
+      {tasks.length === 0 ? (  
+        <Box className={styles.noTasksContainer}>  
+          <Typography className={styles.noTasksMessage}>No tasks available</Typography>  
+          <Box className={styles.buttonGroup}>  
+            <Button variant="contained" color="primary" onClick={() => navigate('/tasks/create')}>  
               Create a Task  
             </Button>  
-            <Button  
-              variant="outlined"  
-              color="secondary"  
-              onClick={() => navigate('/dashboard')} // Navigate back to the Dashboard  
-            >  
+            <Button variant="outlined" color="secondary" onClick={() => navigate('/dashboard')}>  
               Go to Dashboard  
             </Button>  
           </Box>  
         </Box>  
       ) : (  
-        <List>  
+        <List className={styles.taskList}>  
           {tasks.map((task) => (  
-            <ListItem key={task.id}>  
+            <ListItem key={task.id} className={styles.taskItem}>  
               <ListItemText primary={task.title} secondary={task.description} />  
             </ListItem>  
           ))}  

@@ -1,39 +1,45 @@
 import React, { useState } from 'react';  
+import styles from '../styles/Register.module.css'; // Import the CSS module  
+import { Box, Typography, TextField, Button } from '@mui/material';  
 
 const Register = () => {  
-  const [username, setUsername] = useState('');  
+  const [email, setEmail] = useState('');  
   const [password, setPassword] = useState('');  
 
   const handleRegister = (e) => {  
     e.preventDefault();  
-
-    // Simulate registration logic  
-    alert(`User registered: ${username}`);  
+    console.log('Register:', { email, password });  
+    // Add API call for registration  
   };  
 
   return (  
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>  
-      <h1>Register</h1>  
-      <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', width: '300px' }}>  
-        <input  
-          type="text"  
-          placeholder="Username"  
-          value={username}  
-          onChange={(e) => setUsername(e.target.value)}  
-          style={{ marginBottom: '10px', padding: '10px', fontSize: '16px' }}  
+    <Box className={styles.container}>  
+      <Typography variant="h4" className={styles.title}>  
+        Register  
+      </Typography>  
+      <form onSubmit={handleRegister} className={styles.form}>  
+        <TextField  
+          label="Email"  
+          variant="outlined"  
+          fullWidth  
+          value={email}  
+          onChange={(e) => setEmail(e.target.value)}  
+          className={styles.input}  
         />  
-        <input  
+        <TextField  
+          label="Password"  
           type="password"  
-          placeholder="Password"  
+          variant="outlined"  
+          fullWidth  
           value={password}  
           onChange={(e) => setPassword(e.target.value)}  
-          style={{ marginBottom: '10px', padding: '10px', fontSize: '16px' }}  
+          className={styles.input}  
         />  
-        <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>  
+        <Button type="submit" variant="contained" color="primary" className={styles.button}>  
           Register  
-        </button>  
+        </Button>  
       </form>  
-    </div>  
+    </Box>  
   );  
 };  
 

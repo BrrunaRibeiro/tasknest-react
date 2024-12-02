@@ -1,0 +1,97 @@
+/* General Styles */  
+:root {  
+    --primary-color: #4a90e2; /* Light blue */  
+    --secondary-color: #f5f7fa; /* Light gray background */  
+    --text-color: #333; /* Dark text */  
+    --error-color: #e74c3c; /* Red for errors */  
+    --button-hover: #357ab8; /* Darker blue for button hover */  
+    --border-radius: 8px; /* Rounded corners */  
+    --box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */  
+  }  
+  
+  /* Container for all pages */  
+  .container {  
+    max-width: 800px;  
+    margin: 0 auto;  
+    padding: 20px;  
+    background-color: var(--secondary-color);  
+    border-radius: var(--border-radius);  
+    box-shadow: var(--box-shadow);  
+  }  
+  
+  /* Title Styling */  
+  .title {  
+    font-size: 2rem;  
+    font-weight: bold;  
+    color: var(--primary-color);  
+    text-align: center;  
+    margin-bottom: 20px;  
+  }  
+  
+  /* Loading Message */  
+  .loading {  
+    text-align: center;  
+    font-size: 1.2rem;  
+    color: var(--text-color);  
+  }  
+  
+  /* Error Container */  
+  .errorContainer {  
+    text-align: center;  
+    padding: 20px;  
+  }  
+  
+  .errorMessage {  
+    color: var(--error-color);  
+    font-size: 1.2rem;  
+    margin-bottom: 20px;  
+  }  
+  
+  /* Button Group */  
+  .buttonGroup {  
+    display: flex;  
+    justify-content: center;  
+    gap: 10px;  
+    margin-top: 20px;  
+  }  
+  
+  /* No Tasks Message */  
+  .noTasksContainer {  
+    text-align: center;  
+    padding: 20px;  
+  }  
+  
+  .noTasksMessage {  
+    font-size: 1.2rem;  
+    color: var(--text-color);  
+    margin-bottom: 20px;  
+  }  
+  
+  /* Task List */  
+  .taskList {  
+    list-style: none;  
+    padding: 0;  
+  }  
+  
+  .taskItem {  
+    background-color: white;  
+    border-radius: var(--border-radius);  
+    box-shadow: var(--box-shadow);  
+    margin-bottom: 10px;  
+    padding: 10px;  
+    transition: transform 0.2s ease;  
+  }  
+  
+  .taskItem:hover {  
+    transform: translateY(-2px);  
+  }  
+  
+  /* Buttons */  
+  button {  
+    border-radius: var(--border-radius);  
+    transition: background-color 0.2s ease;  
+  }  
+  
+  button:hover {  
+    background-color: var(--button-hover);  
+  }  
