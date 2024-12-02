@@ -1,22 +1,19 @@
 import React from 'react';  
-import { Box, Typography } from '@mui/material';  
+import { useNavigate } from 'react-router-dom';  
 
 const NotFound = () => {  
+  const navigate = useNavigate();  
+
   return (  
-    <Box  
-      display="flex"  
-      flexDirection="column"  
-      alignItems="center"  
-      justifyContent="center"  
-      minHeight="100vh"  
-    >  
-      <Typography variant="h4" gutterBottom>  
-        404 - Page Not Found  
-      </Typography>  
-      <Typography variant="body1">  
-        The page you are looking for does not exist.  
-      </Typography>  
-    </Box>  
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>  
+      <h1>404 - Page Not Found</h1>  
+      <button  
+        onClick={() => navigate('/')}  
+        style={{ padding: '10px', fontSize: '16px', cursor: 'pointer', marginTop: '20px' }}  
+      >  
+        Go to Login  
+      </button>  
+    </div>  
   );  
 };  
 

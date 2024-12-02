@@ -1,26 +1,19 @@
 import React from 'react';  
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';  
-import { useNavigate } from 'react-router-dom'; 
-import styles from '../styles/NavBar.module.css';  
+import { Link } from 'react-router-dom';  
+
 const Navbar = () => {  
-  const navigate = useNavigate();
-
-  const handleLogout = () => {  
-    localStorage.removeItem('token'); 
-    navigate('/'); 
-  };  
-
   return (  
-    <AppBar position="static" className={styles.navbar}>  
-      <Toolbar>  
-        <Typography variant="h6" className={styles.title}>  
-          TaskNest  
-        </Typography>  
-        <Button color="inherit" onClick={handleLogout}>  
-          Logout  
-        </Button>  
-      </Toolbar>  
-    </AppBar>  
+    <nav style={{ padding: '10px', backgroundColor: '#1976d2', color: 'white' }}>  
+      <Link to="/" style={{ marginRight: '10px', color: 'white', textDecoration: 'none' }}>  
+        Login  
+      </Link>  
+      <Link to="/register" style={{ marginRight: '10px', color: 'white', textDecoration: 'none' }}>  
+        Register  
+      </Link>  
+      <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>  
+        Dashboard  
+      </Link>  
+    </nav>  
   );  
 };  
 
