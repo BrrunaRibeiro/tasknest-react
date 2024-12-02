@@ -21,7 +21,7 @@ const Dashboard = () => {
   return (  
     <Box padding={4}>  
       <Typography variant="h4" gutterBottom>  
-        Task Dashboard  
+        Task Dashboards  
       </Typography>  
       <List>  
         {tasks.map((task) => (  

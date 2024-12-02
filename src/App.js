@@ -1,13 +1,16 @@
-import './App.css';
+import React from 'react';  
+import { BrowserRouter as Router } from 'react-router-dom';  
+import AppRoutes from './routes'; 
+import NavBar from './components/NavBar';
+import styles from './styles/NavBar.module.css';  
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>Bruna</p>
-      </header>
-    </div>
-  );
-}
+const App = () => {  
+  return (  
+    <Router> 
+      <NavBar className= {styles.Navbar}/>  
+      <AppRoutes />  
+    </Router>  
+  );  
+};  
 
-export default App;
+export default App;  
