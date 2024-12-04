@@ -14,15 +14,16 @@ const Login = () => {
     e.preventDefault();  
     setLoading(true);   
     setError('');   
-
+  
     try {   
-      const response = await axios.post('https://tasknest-backend-c911b6c54076.herokuapp.com/api/login', {  
+      const response = await axios.post('https://tasknest-backend-c911b6c54076.herokuapp.com/api/login/', {  
         username: username,   
         password: password,  
       });  
-
+  
       if (response.status === 200) {  
-        localStorage.setItem('token', response.data.token);   
+        localStorage.setItem('access_token', response.data.access);   
+        localStorage.setItem('refresh_token', response.data.refresh);   
         navigate('/dashboard');  
       }  
     } catch (error) {  
@@ -34,7 +35,7 @@ const Login = () => {
     } finally {  
       setLoading(false);   
     }  
-  };  
+  }; 
 
   return (  
     <div className={styles.container}>  
