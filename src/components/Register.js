@@ -1,15 +1,28 @@
 import React, { useState } from 'react';  
 import styles from '../styles/Register.module.css'; // Import the CSS module  
 import { Box, Typography, TextField, Button } from '@mui/material';  
+import api from '../api/axiosConfig.js';
 
 const Register = () => {  
   const [email, setEmail] = useState('');  
   const [password, setPassword] = useState('');  
 
-  const handleRegister = (e) => {  
-    e.preventDefault();  
-    console.log('Register:', { email, password });  
-    // Add API call for registration  
+  const handleRegister = async (e) => {  
+    e.preventDefault(); // Prevent page reload  
+    console.log('Register:', { email, password }); // Debugging step  
+  
+    try {  
+      // Make the API call to the backend  
+      const response = await api.post('/register/', { email, password });  
+  
+      // Handle success (e.g., show a success message or redirect)  
+      console.log('Registration successful:', response.data);  
+      alert('Registration successful!'); // Provide feedback to the user  
+    } catch (error) {  
+      // Handle error (e.g., show an error message)  
+      console.error('Registration failed:', error.response ? error.response.data : error.message);  
+      alert('Registration failed. Please try again.');  
+    }  
   };  
 
   return (  
