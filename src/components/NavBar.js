@@ -1,20 +1,39 @@
 import React from 'react';  
 import { Link } from 'react-router-dom';  
+import styles from '../styles/NavBar.module.css'; // Ensure this path is correct  
 
-const Navbar = () => {  
+const Navbar = ({ isLoggedIn, onLogout }) => {  
   return (  
-    <nav style={{ padding: '10px', backgroundColor: '#1976d2', color: 'white' }}>  
-      <Link to="/" style={{ marginRight: '10px', color: 'white', textDecoration: 'none' }}>  
-        Login  
-      </Link>  
-      <Link to="/register" style={{ marginRight: '10px', color: 'white', textDecoration: 'none' }}>  
-        Register  
-      </Link>  
-      <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>  
-        Dashboard  
-      </Link>  
+    <nav className={styles.navbar}>  
+      <div className={styles.logoContainer}>  
+        <img src="/path/to/logo.png" alt="Logo" className={styles.logo} /> {/* Replace with your logo path */}  
+        <Link to="/dashboard" className={styles.navLink}>  
+          Dashboard  
+        </Link>  
+      </div>  
+      <div className={styles.navLinks}>  
+        {!isLoggedIn ? (  
+          <>  
+            <Link to="/" className={styles.button}>  
+              Login  
+            </Link>  
+            <Link to="/register" className={styles.button}>  
+              Register  
+            </Link>  
+          </>  
+        ) : (  
+          <>  
+            <Link to="/create-task" className={styles.button}>  
+              +  
+            </Link>  
+            <button onClick={onLogout} className={styles.button}>  
+              Logout  
+            </button>  
+          </>  
+        )}  
+      </div>  
     </nav>  
   );  
 };  
 
-export default Navbar;  
+export default Navbar;
