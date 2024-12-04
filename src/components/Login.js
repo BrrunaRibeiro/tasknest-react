@@ -16,7 +16,7 @@ const Login = () => {
     setError('');   
 
     try {   
-      const response = await axios.post('https://tasknest-backend-c911b6c54076.herokuapp.com/api/login/', {  
+      const response = await axios.post('https://tasknest-backend-c911b6c54076.herokuapp.com/api/login', {  
         username: username,   
         password: password,  
       });  
