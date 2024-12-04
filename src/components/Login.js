@@ -1,47 +1,69 @@
 import React, { useState } from 'react';  
 import { useNavigate } from 'react-router-dom';  
+import axios from 'axios';   
+import styles from './Login.module.css'; // Import the CSS module  
 
 const Login = () => {  
   const [username, setUsername] = useState('');  
   const [password, setPassword] = useState('');  
+  const [loading, setLoading] = useState(false);   
+  const [error, setError] = useState('');  
   const navigate = useNavigate();  
 
-  const handleLogin = (e) => {  
+  const handleLogin = async (e) => {  
     e.preventDefault();  
+    setLoading(true);   
+    setError('');   
 
-    // Simulate login logic  
-    if (username === 'admin' && password === 'password') {  
-      localStorage.setItem('token', 'dummy-token'); // Save a dummy token  
-      navigate('/dashboard'); // Redirect to the dashboard  
-    } else {  
-      alert('Invalid username or password');  
+    try {  
+      // Update the API endpoint to your Heroku backend URL  
+      const response = await axios.post('https://your-backend-app.herokuapp.com/api/login/', {  
+        username: username,   
+        password: password,  
+      });  
+
+      if (response.status === 200) {  
+        localStorage.setItem('token', response.data.token);   
+        navigate('/dashboard');  
+      }  
+    } catch (error) {  
+      if (error.response) {  
+        setError(error.response.data.error || 'Invalid username or password');   
+      } else {  
+        setError('An error occurred. Please try again.');   
+      }  
+    } finally {  
+      setLoading(false);   
     }  
   };  
 
   return (  
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>  
+    <div className={styles.container}>  
       <h1>Login</h1>  
-      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', width: '300px' }}>  
+      <form onSubmit={handleLogin} className={styles.form}>  
         <input  
           type="text"  
           placeholder="Username"  
           value={username}  
           onChange={(e) => setUsername(e.target.value)}  
-          style={{ marginBottom: '10px', padding: '10px', fontSize: '16px' }}  
+          className={styles.input}  
+          required   
         />  
         <input  
           type="password"  
           placeholder="Password"  
           value={password}  
           onChange={(e) => setPassword(e.target.value)}  
-          style={{ marginBottom: '10px', padding: '10px', fontSize: '16px' }}  
+          className={styles.input}  
+          required   
         />  
-        <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>  
-          Login  
+        {error && <p className={styles.error}>{error}</p>}   
+        <button type="submit" className={styles.button} disabled={loading}>  
+          {loading ? 'Logging in...' : 'Login'}  
         </button>  
       </form>  
     </div>  
   );  
 };  
 
-export default Login;  
+export default Login;
