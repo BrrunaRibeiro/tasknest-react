@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';  
 import api from '../api/axiosConfig';  
-import styles from '../styles/Dashboard.module.css'; // Correct CSS module path  
+import styles from '../styles/Dashboard.module.css';
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';  
 
 const Dashboard = () => {  

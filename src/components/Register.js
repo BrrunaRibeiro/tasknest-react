@@ -9,17 +9,17 @@ const Register = () => {
 
   const handleRegister = async (e) => {  
     e.preventDefault(); // Prevent page reload  
-    console.log('Register:', { email, password }); // Debugging step  
+    console.log('Register:', { email, password }); 
   
     try {  
       // Make the API call to the backend  
       const response = await api.post('/register/', { email, password });  
-  
-      // Handle success (e.g., show a success message or redirect)  
+      console.log('API Response:', response); 
+      // Handle success
       console.log('Registration successful:', response.data);  
       alert('Registration successful!'); // Provide feedback to the user  
     } catch (error) {  
-      // Handle error (e.g., show an error message)  
+      // Handle error 
       console.error('Registration failed:', error.response ? error.response.data : error.message);  
       alert('Registration failed. Please try again.');  
     }  

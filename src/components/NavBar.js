@@ -27,7 +27,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
               +  
             </Link>  
             <button onClick={onLogout} className={styles.button}>  
-              Logout  
+              Logout
             </button>  
           </>  
         )}  
