@@ -8,8 +8,14 @@ const Dashboard = () => {
 
   const fetchTasks = async () => {  
     try {  
-      const response = await api.get('/tasks/');  
-      setTasks(response.data);  
+      const response = await api.get('/tasks/');
+      console.log("Fetched tasks:", response.data);  // Log the response data to check the structure
+
+      if (Array.isArray(response.data)) {
+        setTasks(response.data);  // Only set if it's an array
+      } else {
+        console.error('Expected an array of tasks, but got:', response.data);
+      }
     } catch (error) {  
       console.error('Failed to fetch tasks:', error);  
     }  
@@ -41,4 +47,4 @@ const Dashboard = () => {
   );  
 };  
 
-export default Dashboard;  
+export default Dashboard;
