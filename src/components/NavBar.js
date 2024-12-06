@@ -18,8 +18,11 @@ const Navbar = ({ isLoggedIn, user }) => {
 
   const handleLogout = async () => {
     handleMenuClose();
-    await api.logout();
+    await api.logout(); // Make sure this method logs the user out properly
+    // Optionally update the `isLoggedIn` state to false
   };
+
+  console.log('isLoggedIn:', isLoggedIn); // Debugging line to track login state
 
   return (
     <nav className={styles.navbar}>
@@ -55,16 +58,13 @@ const Navbar = ({ isLoggedIn, user }) => {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
               PaperProps={{
-                style: {
-                  marginTop: '40px',
-                  minWidth: '150px',
-                },
+                className: styles.menuPaper,
               }}
             >
-              <MenuItem disabled>
+              <MenuItem disabled className={styles.menuItem}>
                 {user.username || user.email}
               </MenuItem>
-              <MenuItem onClick={handleLogout}>
+              <MenuItem onClick={handleLogout} className={styles.menuItem}>
                 <LogoutIcon style={{ marginRight: '8px' }} />
                 Logout
               </MenuItem>
