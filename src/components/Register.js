@@ -5,6 +5,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Visibility from '@mui/icons-material/Visibility';  
 import VisibilityOff from '@mui/icons-material/VisibilityOff';  
 import api from '../api/axiosConfig.js';  
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {  
   const [email, setEmail] = useState('');  
@@ -13,6 +14,8 @@ const Register = () => {
   const [emailError, setEmailError] = useState('');  
   const [passwordMatch, setPasswordMatch] = useState(false);  
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);  
+
+  const navigate = useNavigate(); 
 
   // Check if email is already registered  
   const checkEmail = async (email) => {
@@ -60,7 +63,8 @@ const Register = () => {
       // Make the API call to the backend  
       const response = await api.post('/register/', { email, password, confirm_password: confirmPassword });  
       console.log('Registration successful:', response.data);  
-      alert('Registration successful!'); // Provide feedback to the user  
+      alert('Registration successful!');
+      navigate('/'); // Redirect to login page after successful registration
     } catch (error) {  
       console.error('Registration failed:', error.response ? error.response.data : error.message);  
       alert('Registration failed. Please try again.');  
