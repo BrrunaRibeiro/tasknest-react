@@ -1,83 +1,66 @@
-import React, { useEffect, useState } from 'react';  
-import { useNavigate } from 'react-router-dom';  
-import api from '../api/axiosConfig';  
-import styles from '../styles/TaskList.module.css'; // Import the CSS module  
-import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';  
+import React from 'react';
+import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
+import styles from '../styles/TaskList.module.css';
 
-const TaskList = () => {  
-  const [tasks, setTasks] = useState([]);  
-  const [loading, setLoading] = useState(true);  
-  const [error, setError] = useState(null);  
-  const navigate = useNavigate();  
+const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) => {
+  return (
+    <Box className={styles.container}>
+      {/* Filter Controls */}
+      <Box className={styles.filters}>
+        <select
+          name="priority"
+          onChange={(e) => onFilterChange('priority', e.target.value)}
+          value={filters.priority}
+        >
+          <option value="">All Priorities</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        <select
+          name="state"
+          onChange={(e) => onFilterChange('state', e.target.value)}
+          value={filters.state}
+        >
+          <option value="">All States</option>
+          <option value="open">Open</option>
+          <option value="completed">Completed</option>
+        </select>
+      </Box>
 
-  const fetchTasks = async () => {  
-    try {  
-      setLoading(true);  
-      setError(null);  
-      const response = await api.get('/tasks/');  
-      setTasks(response.data);  
-    } catch (err) {  
-      console.error('Failed to fetch tasks:', err);  
-      setError('Failed to fetch tasks. Please check your connection or try again.');  
-    } finally {  
-      setLoading(false);  
-    }  
-  };  
+      {/* Task List */}
+      {tasks.length === 0 ? (
+        <Typography className={styles.noTasksMessage}>No tasks available</Typography>
+      ) : (
+        <List className={styles.taskList}>
+          {tasks.map((task) => (
+            <ListItem key={task.id} className={styles.taskItem}>
+              <ListItemText primary={task.title} secondary={task.description} />
+            </ListItem>
+          ))}
+        </List>
+      )}
 
-  useEffect(() => {  
-    fetchTasks();  
-  }, []);  
+      {/* Pagination Controls */}
+      <Box className={styles.pagination}>
+        <Button
+          disabled={pagination.page === 1}
+          onClick={() => onPageChange(pagination.page - 1)}
+        >
+          Previous
+        </Button>
+        <Typography variant="body1">
+          Page {pagination.page} of {pagination.totalPages}
+        </Typography>
+        <Button
+          disabled={pagination.page === pagination.totalPages}
+          onClick={() => onPageChange(pagination.page + 1)}
+        >
+          Next
+        </Button>
+      </Box>
+    </Box>
+  );
+};
 
-  if (loading) {  
-    return <Typography className={styles.loading}>Loading tasks...</Typography>;  
-  }  
-
-  if (error) {  
-    return (  
-      <Box className={styles.errorContainer}>  
-        <Typography className={styles.errorMessage} variant="h6" gutterBottom>  
-          {error}  
-        </Typography>  
-        <Box className={styles.buttonGroup}>  
-          <Button variant="contained" color="primary" onClick={fetchTasks}>  
-            Try Again  
-          </Button>  
-          <Button variant="outlined" color="secondary" onClick={() => navigate('/')}>  
-            Back to Start  
-          </Button>  
-        </Box>  
-      </Box>  
-    );  
-  }  
-
-  return (  
-    <Box className={styles.container}>  
-      <Typography variant="h4" className={styles.title}>  
-        Task List  
-      </Typography>  
-      {tasks.length === 0 ? (  
-        <Box className={styles.noTasksContainer}>  
-          <Typography className={styles.noTasksMessage}>No tasks available</Typography>  
-          <Box className={styles.buttonGroup}>  
-            <Button variant="contained" color="primary" onClick={() => navigate('/tasks/create')}>  
-              Create a Task  
-            </Button>  
-            <Button variant="outlined" color="secondary" onClick={() => navigate('/dashboard')}>  
-              Go to Dashboard  
-            </Button>  
-          </Box>  
-        </Box>  
-      ) : (  
-        <List className={styles.taskList}>  
-          {tasks.map((task) => (  
-            <ListItem key={task.id} className={styles.taskItem}>  
-              <ListItemText primary={task.title} secondary={task.description} />  
-            </ListItem>  
-          ))}  
-        </List>  
-      )}  
-    </Box>  
-  );  
-};  
-
-export default TaskList;  
+export default TaskList;

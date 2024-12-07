@@ -5,7 +5,7 @@ import api from '../api/axiosConfig';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-const Navbar = ({ isLoggedIn, user }) => {
+const Navbar = ({ isLoggedIn }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleAvatarClick = (event) => {
@@ -21,8 +21,6 @@ const Navbar = ({ isLoggedIn, user }) => {
     await api.logout(); // Make sure this method logs the user out properly
     // Optionally update the `isLoggedIn` state to false
   };
-
-  console.log('isLoggedIn:', isLoggedIn); // Debugging line to track login state
 
   return (
     <nav className={styles.navbar}>
@@ -49,8 +47,10 @@ const Navbar = ({ isLoggedIn, user }) => {
               + Add Task
             </Link>
 
+            {/* Avatar for logged-in users */}
             <IconButton onClick={handleAvatarClick}>
-              <Avatar src={user.avatar || '/path/to/default-avatar.png'} />
+              {/* Default Avatar image */}
+              <Avatar src="/path/to/default-avatar.png" />
             </IconButton>
 
             <Menu
@@ -62,7 +62,8 @@ const Navbar = ({ isLoggedIn, user }) => {
               }}
             >
               <MenuItem disabled className={styles.menuItem}>
-                {user.username || user.email}
+                {/* You can customize this text or add a generic fallback */}
+                Welcome, User
               </MenuItem>
               <MenuItem onClick={handleLogout} className={styles.menuItem}>
                 <LogoutIcon style={{ marginRight: '8px' }} />

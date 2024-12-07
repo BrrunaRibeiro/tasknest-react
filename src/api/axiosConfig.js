@@ -12,12 +12,9 @@ const api = axios.create({
   },
 });
 
+// Add Authorization header in request if token exists
 api.interceptors.request.use(
   (config) => {
-    if (config.url.includes('login')) {
-      return config;
-    }
-
     const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -27,12 +24,12 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Handle token refresh logic properly
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem('refresh_token');
@@ -46,12 +43,13 @@ api.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
           return api(originalRequest);
         } catch (refreshError) {
+          console.error('Token refresh failed', refreshError);
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
-          window.location.href = '/login';
+          window.location.href = '/login'; // Redirect to login after token refresh failure
         }
       } else {
-        window.location.href = '/login';
+        window.location.href = '/login'; // Redirect if no refresh token
       }
     }
 
