@@ -69,3 +69,34 @@
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.selectField {
+    background-color: #b7b3cd; /* Slightly darker muted background */
+    color: #2b2b2b; /* Dark font for contrast */
+    font-family: "proxima-nova", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    border: 1px solid #9e9cc3; /* Border to match theme */
+    border-radius: 6px; /* Rounded corners */
+    padding: 10px 12px;
+    appearance: none; /* Removes default browser styles */
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .selectField:focus {
+    outline: none; /* Removes focus outline */
+    border-color: #746c76; /* Slightly darker border on focus */
+    background-color: #ccc4e7; /* Slightly brighter background on focus */
+  }
+  
+  .selectField:hover {
+    background-color: #ccc4e7; /* Brighter background on hover */
+  }
+  
+  .selectIcon {
+    color: #6c7c2c; /* Accent color for the dropdown icon */
+    margin-left: -24px; /* Adjust position */
+    pointer-events: none; /* Prevent interaction with the icon */
+  }
+  
