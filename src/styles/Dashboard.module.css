@@ -1,48 +1,71 @@
-:root {  
-    --primary-color: #aca3d3;  
-    --secondary-color: #f5f7fa;  
-    --text-color: #333;  
-    --border-radius: 8px;  
-    --box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  
-  }  
-  
-  .container {  
-    max-width: 800px;  
-    margin: 0 auto;  
-    padding: 20px;  
-    background-color: var(--secondary-color);  
-    border-radius: var(--border-radius);  
-    box-shadow: var(--box-shadow);  
-  }  
-  
-  .title {  
-    font-size: 2rem;  
-    font-weight: bold;  
-    color: var(--primary-color);  
-    text-align: center;  
-    margin-bottom: 20px;  
-  }  
-  
-  .noTasksMessage {  
-    font-size: 1.2rem;  
-    color: var(--text-color);  
-    text-align: center;  
-  }  
-  
-  .taskList {  
-    list-style: none;  
-    padding: 0;  
-  }  
-  
-  .taskItem {  
-    background-color: white;  
-    border-radius: var(--border-radius);  
-    box-shadow: var(--box-shadow);  
-    margin-bottom: 10px;  
-    padding: 10px;  
-    transition: transform 0.2s ease;  
-  }  
-  
-  .taskItem:hover {  
-    transform: translateY(-2px);  
-  }  
+@import url('https://use.typekit.net/sdg0ckl.css'); /* Proxima Nova Font */
+
+.container {
+  background-color: #ebebea;
+  color: #2b2b2b;
+  font-family: "proxima-nova", sans-serif;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.title {
+  color: #746c76;
+  font-family: "proxima-nova", sans-serif;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  background-color: #ffffff;
+  padding: 15px;
+  border: 1px solid #ccc4e7;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.filterItem {
+  background-color: #fff;
+  color: #2b2b2b;
+  font-family: "proxima-nova", sans-serif;
+  border: 1px solid #9e9cc3;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.filterItem:hover {
+  background-color: #ccc4e7;
+}
+
+.filterIcon {
+  color: #6c7c2c;
+}
+
+.button {
+  background-color: #aca3d3;
+  color: #fff;
+  font-family: "proxima-nova", sans-serif;
+  font-weight: 700;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #9e9cc3;
+}
+
+.taskListContainer {
+  background-color: #fff;
+  color: #2b2b2b;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
