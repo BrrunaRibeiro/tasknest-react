@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className={styles.login}>  {/* Applying styles to the outer div */}
+    <div className={styles.login}> 
       <form onSubmit={handleSubmit}>
         <input
           type="email"
