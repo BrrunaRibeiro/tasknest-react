@@ -4,6 +4,7 @@ import styles from '../styles/NavBar.module.css';
 import api from '../api/axiosConfig';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
+import logo from '../assets/images/favicon-32x32.png'; // Import image directly
 
 const Navbar = ({ isLoggedIn }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,7 +26,8 @@ const Navbar = ({ isLoggedIn }) => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logoContainer}>
-        <img src="/path/to/logo.png" alt="Logo" className={styles.logo} />
+        {/* Use imported logo */}
+        <img src={logo} alt="Logo" className={styles.logo} />
         <Link to="/dashboard" className={styles.navLink}>
           Dashboard
         </Link>
