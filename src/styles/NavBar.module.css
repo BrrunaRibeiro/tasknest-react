@@ -32,14 +32,14 @@
     color: #333;
     padding: 8px 16px;
     margin: 0 8px;
-    background-color: #3f51b5;
+    background-color: #8c9361;
     color: white;
     border-radius: 4px;
     cursor: pointer;
   }
   
   .button:hover {
-    background-color: #303f9f;
+    background-color: #6c7c2c;
   }
   
   .menuPaper {
