@@ -12,7 +12,7 @@ const AppRoutes = ({ onLogin }) => {
   return (
     <Routes>
       {/* Login and Register Routes */}
-      <Route path="/" element={<Login onLogin={onLogin} />} /> {/* Pass onLogin to Login */}
+      <Route path="/" element={<Login onLogin={onLogin} />} />
       <Route path="/register" element={<Register />} />
 
       {/* Dashboard and Task Management Routes */}

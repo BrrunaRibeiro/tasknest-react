@@ -7,6 +7,7 @@ const NotFound = () => {
   return (  
     <div style={{ textAlign: 'center', marginTop: '50px' }}>  
       <h1>404 - Page Not Found</h1>  
+      <p>The page you are looking for does not exist.</p>
       <button  
         onClick={() => navigate('/')}  
         style={{ padding: '10px', fontSize: '16px', cursor: 'pointer', marginTop: '20px' }}  

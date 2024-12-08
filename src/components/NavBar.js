@@ -6,7 +6,7 @@ import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '../assets/images/favicon-32x32.png'; // Import image directly
 
-const Navbar = ({ isLoggedIn, user }) => {
+const NavBar = ({ isLoggedIn, user }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [username, setUsername] = useState('');
 
@@ -35,7 +35,6 @@ const Navbar = ({ isLoggedIn, user }) => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logoContainer}>
-        {/* Use imported logo */}
         <img src={logo} alt="Logo" className={styles.logo} />
         <Link to="/dashboard" className={styles.navLink}>
           Dashboard
@@ -84,4 +83,4 @@ const Navbar = ({ isLoggedIn, user }) => {
   );
 };
 
-export default Navbar;
+export default NavBar;

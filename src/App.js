@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Navbar from './components/NavBar';
+import NavBar from './components/NavBar';
 import AppRoutes from './routes';
 import api from './api/axiosConfig';
 
@@ -46,8 +46,8 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar isLoggedIn={isLoggedIn} user={user} onLogout={handleLogout} />
-      <AppRoutes onLogin={handleLogin} /> {/* Pass handleLogin to AppRoutes */}
+      <NavBar isLoggedIn={isLoggedIn} user={user} onLogout={handleLogout} />
+      <AppRoutes onLogin={handleLogin} /> 
     </Router>
   );
 };
