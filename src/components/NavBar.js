@@ -30,8 +30,6 @@ const NavBar = ({ isLoggedIn, user }) => {
     await api.logout(); // Make sure this method logs the user out properly
   };
 
-  if (!isLoggedIn) return null; // Optionally, you can prevent rendering if the user isn't logged in.
-
   return (
     <nav className={styles.navbar}>
       <div className={styles.logoContainer}>
@@ -69,6 +67,7 @@ const NavBar = ({ isLoggedIn, user }) => {
               }}
             >
               <MenuItem disabled className={styles.menuItem}>
+                {/* Now we rely solely on the username state */}
                 Welcome, {username}
               </MenuItem>
               <MenuItem onClick={handleLogout} className={styles.menuItem}>

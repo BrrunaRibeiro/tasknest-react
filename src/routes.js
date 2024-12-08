@@ -18,7 +18,7 @@ const AppRoutes = ({ onLogin }) => {
       {/* Dashboard and Task Management Routes */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/tasks" element={<TaskList />} />
-      <Route path="/tasks/create" element={<TaskCreate />} />
+      <Route path="/create-task" element={<TaskCreate />} />
       <Route path="/tasks/:id" element={<TaskDetail />} />
 
       {/* Catch-All Route for 404 */}
