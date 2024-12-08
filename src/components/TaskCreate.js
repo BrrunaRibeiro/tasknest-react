@@ -9,11 +9,13 @@ import styles from '../styles/TaskCreate.module.css';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
-// Yup schema for form validation
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 const schema = yup.object({
   title: yup.string().required('Title is required').min(5, 'Title must be at least 5 characters'),
   description: yup.string().required('Description is required').min(10, 'Description must be at least 10 characters'),
-  due_date: yup.date().required('Due date is required').min(new Date(), 'Due date must be in the future'),
+  due_date: yup.date().required('Due date is required').min(today, 'Due date can’t be in the past'),
 }).required();
 
 const ITEM_HEIGHT = 48;
@@ -27,16 +29,13 @@ const TaskCreate = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [error, setError] = useState('');
 
-  // State for categories
   const [categories, setCategories] = useState([]);
-  // Dialog for creating category
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [categoryError, setCategoryError] = useState('');
 
-  // State for owners
   const [users, setUsers] = useState([]);
 
-  // Priority options (handled by ToggleButtonGroup now)
   const priorities = ['low', 'medium', 'high'];
 
   const { register, handleSubmit, formState: { errors }, reset, setValue, control } = useForm({
@@ -52,23 +51,24 @@ const TaskCreate = () => {
     }
   });
 
-  // Load categories
   const loadCategories = async () => {
     try {
       const response = await api.get('/categories/');
-      setCategories(response.data);
+      console.log('Categories response:', response.data);
+      setCategories(Array.isArray(response.data.results) ? response.data.results : []);
     } catch (err) {
       console.error('Failed to load categories:', err);
+      setCategories([]);
     }
   };
 
-  // Load users
   const loadUsers = async () => {
     try {
-      const response = await api.get('/users/'); // Adjust if you have a different endpoint
-      setUsers(response.data);
+      const response = await api.get('/users/');
+      setUsers(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to load users:', err);
+      setUsers([]); 
     }
   };
 
@@ -77,16 +77,24 @@ const TaskCreate = () => {
     loadUsers();
   }, []);
 
-  // Create new category
   const handleCreateCategory = async () => {
+    setCategoryError('');
+    const trimmedName = newCategoryName.trim().toLowerCase();
+    const duplicate = categories.some(cat => cat.name.toLowerCase() === trimmedName);
+
+    if (duplicate) {
+      setCategoryError('This category already exists. Please choose a different name.');
+      return; 
+    }
+
     try {
       await api.post('/categories/', { name: newCategoryName });
       setOpenCategoryDialog(false);
       setNewCategoryName('');
-      await loadCategories(); // Refresh categories list
+      await loadCategories();
     } catch (err) {
       console.error('Failed to create category:', err);
-      // Show error message if needed
+      setCategoryError('Failed to create category. Please try again.');
     }
   };
 
@@ -94,31 +102,35 @@ const TaskCreate = () => {
     setIsLoading(true);
     setError('');
     try {
-      // Convert due_date to ISO if it's a Date object
-      let dueDateISO = data.due_date;
-      if (dueDateISO instanceof Date) {
-        dueDateISO = dueDateISO.toISOString();
+      let chosenDate = data.due_date;
+      if (chosenDate instanceof Date) {
+        // If the chosen date is today, set time to 23:59:59 to ensure it's in the future
+        const now = new Date();
+        const chosenMidnight = new Date(chosenDate.getFullYear(), chosenDate.getMonth(), chosenDate.getDate());
+        if (chosenMidnight.getTime() === today.getTime()) {
+          // User selected today, set the time to 23:59:59 to ensure future time
+          chosenDate.setHours(23, 59, 59, 999);
+          // If current time is past this, you can also check and add a few minutes
+          // but since we're setting it to the end of today, it should always be in the future
+        }
+
+        chosenDate = chosenDate.toISOString();
       }
 
-      // Use FormData to handle file upload
       const formData = new FormData();
       formData.append('title', data.title);
       formData.append('description', data.description);
-      if (dueDateISO) formData.append('due_date', dueDateISO);
+      if (chosenDate) formData.append('due_date', chosenDate);
       formData.append('priority', data.priority);
       if (data.category_id) formData.append('category', data.category_id);
       if (data.attachment && data.attachment[0]) {
         formData.append('attachment', data.attachment[0]);
       }
-      // Append each selected owner
       if (data.owner_ids && data.owner_ids.length > 0) {
-        data.owner_ids.forEach((ownerId) => {
-          formData.append('owner_ids', ownerId);
-        });
+        data.owner_ids.forEach((ownerId) => formData.append('owner_ids', ownerId));
       }
 
-      // POST to tasks-create endpoint
-      const response = await api.post('/tasks-create/', formData, {
+      const response = await api.post('/create-task/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -127,8 +139,8 @@ const TaskCreate = () => {
       if (response.status === 201) {
         setSnackbarMessage('Task created successfully!');
         setSnackbarSeverity('success');
-        reset(); // Reset form fields
-        navigate('/dashboard'); // Redirect to Dashboard
+        reset();
+        navigate('/dashboard');
       }
     } catch (error) {
       if (error.response) {
@@ -145,7 +157,7 @@ const TaskCreate = () => {
   };
 
   useEffect(() => {
-    // Add additional logic based on form values, if necessary
+    // Additional logic if needed
   }, [setValue]);
 
   return (
@@ -187,20 +199,19 @@ const TaskCreate = () => {
               label="Due Date"
               value={field.value}
               onChange={(newValue) => field.onChange(newValue)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  fullWidth
-                  error={!!errors.due_date}
-                  helperText={errors.due_date ? errors.due_date.message : ''}
-                  className={styles.input}
-                />
-              )}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  error: !!errors.due_date,
+                  helperText: errors.due_date ? errors.due_date.message : '',
+                  className: styles.input
+                }
+              }}
             />
           )}
         />
 
-        {/* Priority Field using ToggleButtonGroup */}
+        {/* Priority Field */}
         <Controller
           name="priority"
           control={control}
@@ -232,33 +243,44 @@ const TaskCreate = () => {
         />
 
         {/* Category Field */}
-        <Box display="flex" alignItems="center" className={styles.input}>
-          <FormControl fullWidth>
-            <InputLabel id="category-label">Category</InputLabel>
-            <Controller
-              name="category_id"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="category-label"
-                  label="Category"
-                >
-                  <MenuItem value="">None</MenuItem>
-                  {categories.map(cat => (
-                    <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </FormControl>
-          <Button variant="contained" color="secondary" onClick={() => setOpenCategoryDialog(true)} style={{ marginLeft: '10px' }}>
-            Create Category
-          </Button>
-        </Box>
+        {categories.length === 0 ? (
+          <Box className={styles.input} display="flex" flexDirection="column" alignItems="flex-start">
+            <Typography variant="body1" gutterBottom>
+              You don't have any categories yet. At least one category is required to create a new task.
+            </Typography>
+            <Button variant="contained" color="secondary" onClick={() => setOpenCategoryDialog(true)}>
+              Create Category
+            </Button>
+          </Box>
+        ) : (
+          <Box display="flex" alignItems="center" className={styles.input}>
+            <FormControl fullWidth>
+              <InputLabel id="category-label">Category</InputLabel>
+              <Controller
+                name="category_id"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="category-label"
+                    label="Category"
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    {categories.map(cat => (
+                      <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+            <Button variant="contained" color="secondary" onClick={() => setOpenCategoryDialog(true)} style={{ marginLeft: '10px' }}>
+              Create Category
+            </Button>
+          </Box>
+        )}
 
-        {/* Owners Field (Multi-select) */}
+        {/* Owners Field */}
         <FormControl fullWidth className={styles.input}>
           <InputLabel id="owners-label">Additional Owners</InputLabel>
           <Controller
@@ -271,6 +293,7 @@ const TaskCreate = () => {
                 labelId="owners-label"
                 label="Additional Owners"
                 multiple
+                disabled={users.length === 0}
                 input={<OutlinedInput label="Additional Owners" />}
                 renderValue={(selected) => {
                   const selectedOwners = users.filter(user => selected.includes(user.id));
@@ -285,12 +308,18 @@ const TaskCreate = () => {
                   },
                 }}
               >
-                {users.map((u) => (
-                  <MenuItem key={u.id} value={u.id}>
-                    <Checkbox checked={field.value.indexOf(u.id) > -1} />
-                    <ListItemText primary={u.username} />
+                {users.length === 0 ? (
+                  <MenuItem disabled>
+                    No owners available. This functionality is not currently supported.
                   </MenuItem>
-                ))}
+                ) : (
+                  users.map((u) => (
+                    <MenuItem key={u.id} value={u.id}>
+                      <Checkbox checked={field.value.indexOf(u.id) > -1} />
+                      <ListItemText primary={u.username} />
+                    </MenuItem>
+                  ))
+                )}
               </Select>
             )}
           />
@@ -326,8 +355,8 @@ const TaskCreate = () => {
       >
         <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
+          {error && <div className={styles.error} style={{ marginTop: '8px' }}>{error}</div>}
         </Alert>
-        {error && <p className={styles.error}>{error}</p>}
       </Snackbar>
 
       {/* Dialog for creating a new category */}
@@ -341,8 +370,16 @@ const TaskCreate = () => {
             fullWidth
             variant="outlined"
             value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
+            onChange={(e) => {
+              setNewCategoryName(e.target.value);
+              setCategoryError('');
+            }}
           />
+          {categoryError && (
+            <Typography variant="body2" color="error" style={{ marginTop: '8px' }}>
+              {categoryError}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenCategoryDialog(false)} color="inherit">
