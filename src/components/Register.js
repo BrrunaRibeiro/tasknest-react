@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from '../styles/Register.module.css';  
 import { Box, Typography, TextField, Button, IconButton, InputAdornment } from '@mui/material';  
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';  
+import CloseIcon from '@mui/icons-material/Close';  
 import Visibility from '@mui/icons-material/Visibility';  
 import VisibilityOff from '@mui/icons-material/VisibilityOff';  
 import api from '../api/axiosConfig.js';  
@@ -20,21 +21,20 @@ const Register = () => {
   // Check if email is already registered  
   const checkEmail = async (email) => {
     try {
-        const response = await fetch(`http://localhost:8000/api/check-email/?email=${email}`);
-        
-        if (response.ok) {
-            const data = await response.json();
-            if (data.email_exists) {
-                setEmailError('This email is already registered.');
-            } else {
-                setEmailError('');
-            }
+      const response = await fetch(`http://localhost:8000/api/check-email/?email=${email}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.email_exists) {
+          setEmailError('This email is already registered.');
         } else {
-            throw new Error('Failed to check email.');
+          setEmailError('');
         }
+      } else {
+        throw new Error('Failed to check email.');
+      }
     } catch (error) {
-        console.error('Error checking email:', error);
-        setEmailError('Could not validate email. Please try again later.');
+      console.error('Error checking email:', error);
+      setEmailError('Could not validate email. Please try again later.');
     }
   };
 
@@ -43,13 +43,15 @@ const Register = () => {
   };  
 
   const handlePasswordChange = (value) => {  
-    setPassword(value);  
-    setPasswordMatch(value === confirmPassword && value.length >= 8);  
+    setPassword(value);
+    const isValidLength = value.length >= 8;
+    setPasswordMatch(isValidLength && value === confirmPassword);
   };  
 
   const handleConfirmPasswordChange = (value) => {  
-    setConfirmPassword(value);  
-    setPasswordMatch(value === password && value.length >= 8);  
+    setConfirmPassword(value);
+    const isValidLength = password.length >= 8;
+    setPasswordMatch(isValidLength && value === password);
   };  
 
   const togglePasswordVisibility = () => {  
@@ -60,7 +62,6 @@ const Register = () => {
     e.preventDefault();  
 
     try {  
-      // Make the API call to the backend  
       const response = await api.post('/register/', { email, password, confirm_password: confirmPassword });  
       console.log('Registration successful:', response.data);  
       alert('Registration successful!');
@@ -70,6 +71,13 @@ const Register = () => {
       alert('Registration failed. Please try again.');  
     }  
   };  
+
+  // Password Validation
+  const passwordLengthValid = password.length >= 8;
+  const showPasswordError = password.length > 0 && !passwordLengthValid;
+
+  const confirmMatches = passwordMatch;
+  const showConfirmError = confirmPassword.length > 0 && !confirmMatches;
 
   return (  
     <Box className={styles.container}>  
@@ -91,56 +99,74 @@ const Register = () => {
         />  
 
         {/* Password Field */}
-        <TextField  
-          label="Password"  
-          type={isPasswordVisible ? 'text' : 'password'}  
-          variant="outlined"  
-          fullWidth  
-          value={password}  
-          onChange={(e) => handlePasswordChange(e.target.value)}  
-          className={styles.input}  
-          InputProps={{  
-            endAdornment: (  
-              <InputAdornment position="end">  
-                <IconButton onClick={togglePasswordVisibility}>  
-                  {isPasswordVisible ? <VisibilityOff /> : <Visibility />}  
-                </IconButton>  
-              </InputAdornment>  
-            ),  
-          }}  
-        />  
+        <TextField
+          label="Password"
+          type={isPasswordVisible ? 'text' : 'password'}
+          variant="outlined"
+          fullWidth
+          value={password}
+          onChange={(e) => handlePasswordChange(e.target.value)}
+          className={styles.input}
+          error={showPasswordError}
+          helperText={showPasswordError ? 'Password must contain minimum 8 characters' : ''}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility}>
+                  {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+                {password.length > 0 &&
+                  (passwordLengthValid ? (
+                    <CheckCircleOutlineIcon color="success" />
+                  ) : (
+                    <CloseIcon color="error" />
+                  ))}
+              </InputAdornment>
+            ),
+          }}
+        />
 
         {/* Confirm Password Field */}
-        <TextField  
-          label="Confirm Password"  
-          type={isPasswordVisible ? 'text' : 'password'}  
-          variant="outlined"  
-          fullWidth  
-          value={confirmPassword}  
-          onChange={(e) => handleConfirmPasswordChange(e.target.value)}  
-          className={styles.input}  
-          InputProps={{  
-            endAdornment: passwordMatch && (  
-              <InputAdornment position="end">  
-                <CheckCircleOutlineIcon color="success" />  
-              </InputAdornment>  
-            ),  
-          }}  
-        />  
+        <TextField
+          label="Confirm Password"
+          type={isPasswordVisible ? 'text' : 'password'}
+          variant="outlined"
+          fullWidth
+          value={confirmPassword}
+          onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+          className={styles.input}
+          error={showConfirmError}
+          helperText={showConfirmError ? 'Passwords must match' : ''}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility}>
+                  {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+                {confirmPassword.length > 0 &&
+                  (confirmMatches ? (
+                    <CheckCircleOutlineIcon color="success" />
+                  ) : (
+                    <CloseIcon color="error" />
+                  ))}
+              </InputAdornment>
+            ),
+          }}
+        />
 
         {/* Submit Button */}
-        <Button  
-          type="submit"  
-          variant="contained"  
-          color="primary"  
-          className={styles.button}  
-          disabled={!passwordMatch || !!emailError || !email || !password}  
-        >  
-          Register  
-        </Button>  
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          className={styles.button}
+          disabled={!passwordMatch || !!emailError || !email || !password}
+        >
+          Register
+        </Button>
       </form>  
     </Box>  
   );  
 };  
 
-export default Register;  
+export default Register;
