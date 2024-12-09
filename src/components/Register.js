@@ -79,94 +79,97 @@ const Register = () => {
   const confirmMatches = passwordMatch;
   const showConfirmError = confirmPassword.length > 0 && !confirmMatches;
 
-  return (  
-    <Box className={styles.container}>  
-      <Typography variant="h4" className={styles.title}>  
-        Register  
-      </Typography>  
-      <form onSubmit={handleRegister} className={styles.form}>  
-        {/* Email Field */}
-        <TextField  
-          label="Email"  
-          variant="outlined"  
-          fullWidth  
-          value={email}  
-          onChange={(e) => setEmail(e.target.value)}  
-          onBlur={handleEmailBlur}  
-          error={!!emailError}  
-          helperText={emailError}  
-          className={styles.input}  
-        />  
-
-        {/* Password Field */}
-        <TextField
-          label="Password"
-          type={isPasswordVisible ? 'text' : 'password'}
-          variant="outlined"
-          fullWidth
-          value={password}
-          onChange={(e) => handlePasswordChange(e.target.value)}
-          className={styles.input}
-          error={showPasswordError}
-          helperText={showPasswordError ? 'Password must contain minimum 8 characters' : ''}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={togglePasswordVisibility}>
-                  {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-                {password.length > 0 &&
-                  (passwordLengthValid ? (
-                    <CheckCircleOutlineIcon color="success" />
-                  ) : (
-                    <CloseIcon color="error" />
-                  ))}
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        {/* Confirm Password Field */}
-        <TextField
-          label="Confirm Password"
-          type={isPasswordVisible ? 'text' : 'password'}
-          variant="outlined"
-          fullWidth
-          value={confirmPassword}
-          onChange={(e) => handleConfirmPasswordChange(e.target.value)}
-          className={styles.input}
-          error={showConfirmError}
-          helperText={showConfirmError ? 'Passwords must match' : ''}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={togglePasswordVisibility}>
-                  {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-                {confirmPassword.length > 0 &&
-                  (confirmMatches ? (
-                    <CheckCircleOutlineIcon color="success" />
-                  ) : (
-                    <CloseIcon color="error" />
-                  ))}
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        {/* Submit Button */}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          className={styles.button}
-          disabled={!passwordMatch || !!emailError || !email || !password}
-        >
+  return (
+    <>
+      <div className={styles.background}></div> {/* Background */}
+      <Box className={styles.container}>
+        <Typography variant="h4" className={styles.title}>
           Register
-        </Button>
-      </form>  
-    </Box>  
-  );  
-};  
+        </Typography>
+        <form onSubmit={handleRegister} className={styles.form}>
+          {/* Email Field */}
+          <TextField  
+            label="Email"  
+            variant="outlined"  
+            fullWidth  
+            value={email}  
+            onChange={(e) => setEmail(e.target.value)}  
+            onBlur={handleEmailBlur}  
+            error={!!emailError}  
+            helperText={emailError}  
+            className={styles.input}  
+          />
+
+          {/* Password Field */}
+          <TextField
+            label="Password"
+            type={isPasswordVisible ? 'text' : 'password'}
+            variant="outlined"
+            fullWidth
+            value={password}
+            onChange={(e) => handlePasswordChange(e.target.value)}
+            className={styles.input}
+            error={showPasswordError}
+            helperText={showPasswordError ? 'Password must contain minimum 8 characters' : ''}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility}>
+                    {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                  {password.length > 0 &&
+                    (passwordLengthValid ? (
+                      <CheckCircleOutlineIcon color="success" />
+                    ) : (
+                      <CloseIcon color="error" />
+                    ))}
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Confirm Password Field */}
+          <TextField
+            label="Confirm Password"
+            type={isPasswordVisible ? 'text' : 'password'}
+            variant="outlined"
+            fullWidth
+            value={confirmPassword}
+            onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+            className={styles.input}
+            error={showConfirmError}
+            helperText={showConfirmError ? 'Passwords must match' : ''}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility}>
+                    {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                  {confirmPassword.length > 0 &&
+                    (confirmMatches ? (
+                      <CheckCircleOutlineIcon color="success" />
+                    ) : (
+                      <CloseIcon color="error" />
+                    ))}
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            className={styles.button}
+            disabled={!passwordMatch || !!emailError || !email || !password}
+          >
+            Register
+          </Button>
+        </form>
+      </Box>
+    </>
+  );
+};
 
 export default Register;
