@@ -5,7 +5,7 @@
   --background-color: #ebebea; /* Background */
   --light-font-color: #ffffff; /* Light Font */
   --dark-font-color: #2b2b2b; /* Dark Font */
-  --muted-background-color: #b7b3cd; /* Muted Background */
+  --muted-background-color: #f5f5f5; /* Off-white Background for Inputs */
   --accent-contrast-color: #ccc4e7; /* Accent Contrast */
   --highlight-contrast-color: #6c7c2c; /* Highlight Contrast */
   --tertiary-background-color: #746c76; /* Tertiary Background */
@@ -36,7 +36,7 @@ body {
 
 .container {
   max-width: 400px;
-  margin: 0 auto;
+  margin: 50px auto; /* Add top margin to separate from navbar */
   padding: 20px;
   background-color: #fff;
   border-radius: var(--border-radius);
@@ -61,7 +61,6 @@ body {
 
 .input {
   margin-bottom: 15px;
-  font-family: Arial, sans-serif;
 }
 
 .input input {
@@ -74,8 +73,7 @@ body {
 
 .input input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 4px var(--primary-color);
+  border-color: var(--accent-contrast-color);
 }
 
 .input input.error {
