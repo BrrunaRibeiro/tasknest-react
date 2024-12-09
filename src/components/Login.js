@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/Login.module.css'; // Importing the CSS module
+import styles from '../styles/Login.module.css';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -13,7 +13,7 @@ const Login = ({ onLogin }) => {
 
     try {
       const response = await api.post('login/', {
-        username: email,  // Sending email as username
+        username: email, // Sending email as username
         password: password,
       });
 
@@ -32,28 +32,41 @@ const Login = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Login failed', error);
+      alert('Invalid credentials. Please try again.');
     }
   };
 
   return (
-    <div className={styles.login}> 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
+    <div>
+      <div className={styles.background}></div>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Login</h1>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.input}>
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div className={styles.input}>
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button type="submit" className={styles.button}>
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
