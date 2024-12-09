@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Select, FormControl, InputLabel, OutlinedInput, Checkbox, ListItemText } from '@mui/material';
+import { 
+  Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert, 
+  MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, 
+  Select, FormControl, InputLabel, OutlinedInput, Checkbox, ListItemText 
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,17 +13,14 @@ import styles from '../styles/TaskCreate.module.css';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+// Define today as the start of the current day, local time
+const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
 
 const schema = yup.object({
   title: yup.string().required('Title is required').min(5, 'Title must be at least 5 characters'),
   description: yup.string().required('Description is required').min(10, 'Description must be at least 10 characters'),
   due_date: yup.date().required('Due date is required').min(today, 'Due date can’t be in the past'),
 }).required();
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
 
 const TaskCreate = () => {
   const navigate = useNavigate();
@@ -30,15 +31,15 @@ const TaskCreate = () => {
   const [error, setError] = useState('');
 
   const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [categoryError, setCategoryError] = useState('');
 
-  const [users, setUsers] = useState([]);
-
   const priorities = ['low', 'medium', 'high'];
 
-  const { register, handleSubmit, formState: { errors }, reset, setValue, control } = useForm({
+  const { register, handleSubmit, formState: { errors }, control } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       title: '',
@@ -51,6 +52,7 @@ const TaskCreate = () => {
     }
   });
 
+  // Load categories
   const loadCategories = async () => {
     try {
       const response = await api.get('/categories/');
@@ -58,17 +60,16 @@ const TaskCreate = () => {
       setCategories(Array.isArray(response.data.results) ? response.data.results : []);
     } catch (err) {
       console.error('Failed to load categories:', err);
-      setCategories([]);
     }
   };
 
+  // Load users
   const loadUsers = async () => {
     try {
       const response = await api.get('/users/');
       setUsers(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to load users:', err);
-      setUsers([]); 
     }
   };
 
@@ -84,14 +85,14 @@ const TaskCreate = () => {
 
     if (duplicate) {
       setCategoryError('This category already exists. Please choose a different name.');
-      return; 
+      return;
     }
 
     try {
       await api.post('/categories/', { name: newCategoryName });
-      setOpenCategoryDialog(false);
       setNewCategoryName('');
-      await loadCategories();
+      setOpenCategoryDialog(false);
+      await loadCategories(); // refresh categories
     } catch (err) {
       console.error('Failed to create category:', err);
       setCategoryError('Failed to create category. Please try again.');
@@ -102,32 +103,28 @@ const TaskCreate = () => {
     setIsLoading(true);
     setError('');
     try {
-      let chosenDate = data.due_date;
-      if (chosenDate instanceof Date) {
-        // If the chosen date is today, set time to 23:59:59 to ensure it's in the future
-        const now = new Date();
-        const chosenMidnight = new Date(chosenDate.getFullYear(), chosenDate.getMonth(), chosenDate.getDate());
+      let dueDateISO = data.due_date;
+      if (dueDateISO instanceof Date) {
+        const chosenMidnight = new Date(dueDateISO.getFullYear(), dueDateISO.getMonth(), dueDateISO.getDate());
         if (chosenMidnight.getTime() === today.getTime()) {
-          // User selected today, set the time to 23:59:59 to ensure future time
-          chosenDate.setHours(23, 59, 59, 999);
-          // If current time is past this, you can also check and add a few minutes
-          // but since we're setting it to the end of today, it should always be in the future
+          dueDateISO.setHours(23, 59, 59, 999);
         }
-
-        chosenDate = chosenDate.toISOString();
+        dueDateISO = dueDateISO.toISOString();
       }
 
       const formData = new FormData();
       formData.append('title', data.title);
       formData.append('description', data.description);
-      if (chosenDate) formData.append('due_date', chosenDate);
+      if (dueDateISO) formData.append('due_date', dueDateISO);
       formData.append('priority', data.priority);
       if (data.category_id) formData.append('category', data.category_id);
       if (data.attachment && data.attachment[0]) {
         formData.append('attachment', data.attachment[0]);
       }
       if (data.owner_ids && data.owner_ids.length > 0) {
-        data.owner_ids.forEach((ownerId) => formData.append('owner_ids', ownerId));
+        data.owner_ids.forEach((ownerId) => {
+          formData.append('owner_ids', ownerId);
+        });
       }
 
       const response = await api.post('/create-task/', formData, {
@@ -139,7 +136,7 @@ const TaskCreate = () => {
       if (response.status === 201) {
         setSnackbarMessage('Task created successfully!');
         setSnackbarSeverity('success');
-        reset();
+        setOpenSnackbar(true);
         navigate('/dashboard');
       }
     } catch (error) {
@@ -150,15 +147,11 @@ const TaskCreate = () => {
       }
       setSnackbarMessage('Failed to create task. Please try again.');
       setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     } finally {
       setIsLoading(false);
-      setOpenSnackbar(true);
     }
   };
-
-  useEffect(() => {
-    // Additional logic if needed
-  }, [setValue]);
 
   return (
     <Box className={styles.container}>
@@ -211,7 +204,7 @@ const TaskCreate = () => {
           )}
         />
 
-        {/* Priority Field */}
+        {/* Priority Field using ToggleButtonGroup */}
         <Controller
           name="priority"
           control={control}
@@ -280,7 +273,7 @@ const TaskCreate = () => {
           </Box>
         )}
 
-        {/* Owners Field */}
+        {/* Owners Field (Multi-select) - If no backend support, disable and inform */}
         <FormControl fullWidth className={styles.input}>
           <InputLabel id="owners-label">Additional Owners</InputLabel>
           <Controller
@@ -293,19 +286,11 @@ const TaskCreate = () => {
                 labelId="owners-label"
                 label="Additional Owners"
                 multiple
-                disabled={users.length === 0}
+                disabled={users.length === 0} // Disable if no users loaded or no backend support
                 input={<OutlinedInput label="Additional Owners" />}
                 renderValue={(selected) => {
                   const selectedOwners = users.filter(user => selected.includes(user.id));
                   return selectedOwners.map(u => u.username).join(', ');
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                      width: 250,
-                    },
-                  },
                 }}
               >
                 {users.length === 0 ? (

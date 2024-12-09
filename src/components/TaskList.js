@@ -1,8 +1,15 @@
 import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText, Button, ListItemButton } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/TaskList.module.css';
 
 const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) => {
+  const navigate = useNavigate();
+
+  const handleTaskClick = (taskId) => {
+    navigate(`/tasks/${taskId}`);
+  };
+
   return (
     <Box className={styles.container}>
       {/* Filter Controls */}
@@ -34,8 +41,10 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) 
       ) : (
         <List className={styles.taskList}>
           {tasks.map((task) => (
-            <ListItem key={task.id} className={styles.taskItem}>
-              <ListItemText primary={task.title} secondary={task.description} />
+            <ListItem key={task.id} className={styles.taskItem} disablePadding>
+              <ListItemButton onClick={() => handleTaskClick(task.id)}>
+                <ListItemText primary={task.title} secondary={task.description} />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>
