@@ -1,5 +1,23 @@
 @import url('https://use.typekit.net/sdg0ckl.css'); /* Proxima Nova Font */
 
+:root {
+  --primary-color: #aca3d3; /* Primary Accent */
+  --secondary-color: #9e9cc3; /* Secondary Accent */
+  --highlight-color: #cd584f; /* Highlight */
+  --background-color: #ebebea; /* Background */
+  --light-font-color: #ffffff; /* Light Font */
+  --dark-font-color: #2b2b2b; /* Dark Font */
+  --muted-background-color: #f5f5f5; /* Off-white Background for Inputs */
+  --accent-contrast-color: #ccc4e7; /* Accent Contrast */
+  --highlight-contrast-color: #6c7c2c; /* Highlight Contrast */
+  --tertiary-background-color: #746c76; /* Tertiary Background */
+  --border-radius: 8px;
+  --box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  --light-green: #ccd584; /* Light Green from your color schema */
+  --light-green-bg: #eff2d8; /* Light Green Background */
+}
+
+
 .container {
   background-color: #ebebea;
   color: #2b2b2b;

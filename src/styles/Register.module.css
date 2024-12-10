@@ -36,7 +36,7 @@ body {
 
 .container {
   max-width: 400px;
-  margin: 50px auto; /* Add top margin to separate from navbar */
+  margin: 50px auto;
   padding: 20px;
   background-color: #fff;
   border-radius: var(--border-radius);
@@ -50,7 +50,7 @@ body {
   font-weight: bold;
   color: var(--primary-color);
   text-align: center;
-  margin-bottom: 20px;
+  margin: 20px;
 }
 
 .form {
@@ -60,35 +60,75 @@ body {
 }
 
 .input {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: var(--dark-font-color);
 }
 
 .input input {
-  background-color: var(--muted-background-color);
-  border: 1px solid var(--accent-contrast-color);
-  border-radius: var(--border-radius);
+  width: 94%;
   padding: 10px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--accent-contrast-color);
+  background-color: var(--muted-background-color);
   color: var(--dark-font-color);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .input input:focus {
   outline: none;
-  border-color: var(--accent-contrast-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 4px var(--primary-color);
 }
 
 .input input.error {
   border-color: var(--highlight-color);
-  background-color: var(--highlight-contrast-color);
+  background-color: #fff;
 }
 
-.input-helper-text {
+.inputHelperText {
+  font-size: 0.75rem;
   color: var(--highlight-color);
-  font-size: 0.875rem;
+  margin-top: 4px;
+  display: block;
+}
+
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.iconButton {
+  position: absolute;
+  left: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.successIcon {
+  position: absolute;
+  right: 50px;
+  color: green;
+}
+
+.errorIcon {
+  position: absolute;
+  right: 50px;
+  color: red;
 }
 
 .button {
   align-self: flex-end;
-  background-color: var(--primary-color);
+  background-color: #aca3d3;
   color: var(--light-font-color);
   padding: 10px 15px;
   border: none;
@@ -105,6 +145,28 @@ body {
 
 .button:disabled {
   background-color: var(--muted-background-color);
-  color: var(--dark-font-color);
+  color: #626262;
   cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .container {
+    max-width: 95%;
+    margin: 20px auto;
+    padding: 10px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .input input {
+    padding: 8px;
+  }
+
+  .button {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
 }

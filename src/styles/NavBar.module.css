@@ -1,56 +1,136 @@
+:root {
+  --primary-color: #aca3d3; /* Primary Accent */
+  --secondary-color: #9e9cc3; /* Secondary Accent */
+  --highlight-color: #cd584f; /* Highlight */
+  --background-color: #ebebea; /* Background */
+  --light-font-color: #ffffff; /* Light Font */
+  --dark-font-color: #2b2b2b; /* Dark Font */
+  --muted-background-color: #f5f5f5; /* Off-white Background for Inputs */
+  --accent-contrast-color: #ccc4e7; /* Accent Contrast */
+  --highlight-contrast-color: #6c7c2c; /* Highlight Contrast */
+  --tertiary-background-color: #746c76; /* Tertiary Background */
+  --border-radius: 8px;
+  --box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  --light-green: #ccd584; /* Light Green from your color schema */
+  --light-green-bg: #eff2d8; /* Light Green Background */
+}
+
+/* General Navbar Styles */
+/* General Navbar Styles */
 .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 20px;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #333;
+  margin-right: 16px;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #6c7c2c;
+}
+
+.button {
+  text-decoration: none;
+  color: #fff;
+  padding: 8px 16px;
+  margin: 0 8px;
+  background-color: #8c9361;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.loginButton {
+  background-color: #fff; 
+  color: #8c9361; 
+  border: 2px solid #8c9361; 
+}
+
+
+.button:hover {
+  background-color: #6c7c2c;
+  color: #fff;
+}
+
+/* Hamburger Menu */
+.hamburgerMenu {
+  display: none;
+  cursor: pointer;
+}
+
+.dropdownMenu {
+  display: none;
+  flex-direction: column;
+  background-color: white;
+  position: absolute;
+  top: 60px;
+  right: 16px;
+  width: 200px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1001;
+}
+
+.dropdownMenu a {
+  text-decoration: none;
+  padding: 12px 16px;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownMenu a:hover {
+  background-color: #f9f9f9;
+}
+
+/* Responsive Styles */
+.desktopOnly {
+  display: flex;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background-color: #fff;
   }
-  
-  .logoContainer {
+
+  .hamburgerMenu {
+    display: block;
+  }
+
+  .dropdownMenu.show {
     display: flex;
-    align-items: center;
   }
-  
-  .logo {
-    height: 40px;
-    margin-right: 20px;
-  }
-  
-  .navLink {
-    text-decoration: none;
-    color: #333;
-    margin-right: 16px;
-  }
-  
-  .navLinks {
-    display: flex;
-    align-items: center;
-  }
-  
-  .button {
-    text-decoration: none;
-    color: #333;
-    padding: 8px 16px;
-    margin: 0 8px;
-    background-color: #8c9361;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .button:hover {
-    background-color: #6c7c2c;
-  }
-  
-  .menuPaper {
-    min-width: 150px;
-  }
-  
-  .menuItem {
-    font-size: 14px;
-  }
-  
-  .avatar {
-    margin-right: 8px;
-  }
-  
+}

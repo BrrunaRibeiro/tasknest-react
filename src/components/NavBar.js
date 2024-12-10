@@ -1,21 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import styles from '../styles/NavBar.module.css'; 
-import api from '../api/axiosConfig';
+import styles from '../styles/NavBar.module.css';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
-import logo from '../assets/images/favicon-32x32.png'; // Import image directly
+import MenuIcon from '@mui/icons-material/Menu';
+import logo from '../assets/images/favicon-32x32.png';
 
 const NavBar = ({ isLoggedIn, user }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [username, setUsername] = useState('');
-
-  useEffect(() => {
-    // Update username when user prop changes
-    if (user && user.username) {
-      setUsername(user.username);
-    }
-  }, [user]);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const handleAvatarClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -27,7 +20,11 @@ const NavBar = ({ isLoggedIn, user }) => {
 
   const handleLogout = async () => {
     handleMenuClose();
-    await api.logout(); // Make sure this method logs the user out properly
+    console.log('Logged out');
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible((prev) => !prev);
   };
 
   return (
@@ -39,10 +36,10 @@ const NavBar = ({ isLoggedIn, user }) => {
         </Link>
       </div>
 
-      <div className={styles.navLinks}>
+      <div className={`${styles.navLinks} ${styles.desktopOnly}`}>
         {!isLoggedIn ? (
           <>
-            <Link to="/" className={styles.button}>
+            <Link to="/" className={`${styles.button} ${styles.loginButton}`}>
               Login
             </Link>
             <Link to="/register" className={styles.button}>
@@ -57,7 +54,6 @@ const NavBar = ({ isLoggedIn, user }) => {
             <IconButton onClick={handleAvatarClick}>
               <Avatar src="/path/to/default-avatar.png" />
             </IconButton>
-
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -67,8 +63,7 @@ const NavBar = ({ isLoggedIn, user }) => {
               }}
             >
               <MenuItem disabled className={styles.menuItem}>
-                {/* Now we rely solely on the username state */}
-                Welcome, {username}
+                Welcome, {user?.username || 'User'}
               </MenuItem>
               <MenuItem onClick={handleLogout} className={styles.menuItem}>
                 <LogoutIcon style={{ marginRight: '8px' }} />
@@ -78,6 +73,39 @@ const NavBar = ({ isLoggedIn, user }) => {
           </>
         )}
       </div>
+
+      <div className={`${styles.hamburgerMenu} ${styles.mobileOnly}`}>
+        <IconButton onClick={toggleDropdown}>
+          <MenuIcon />
+        </IconButton>
+      </div>
+
+      {dropdownVisible && (
+        <div className={`${styles.dropdownMenu} ${styles.mobileOnly}`}>
+          {!isLoggedIn ? (
+            <>
+              <Link to="/" className={styles.dropdownLink}>
+                Login
+              </Link>
+              <Link to="/register" className={styles.dropdownLink}>
+                Register
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/dashboard" className={styles.dropdownLink}>
+                Dashboard
+              </Link>
+              <Link to="/create-task" className={styles.dropdownLink}>
+                + Add Task
+              </Link>
+              <Link to="#" onClick={handleLogout} className={styles.dropdownLink}>
+                Logout
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 };

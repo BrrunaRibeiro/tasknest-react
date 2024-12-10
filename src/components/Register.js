@@ -1,24 +1,21 @@
-import React, { useState } from 'react';  
-import styles from '../styles/Register.module.css';  
-import { Box, Typography, TextField, Button, IconButton, InputAdornment } from '@mui/material';  
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';  
-import CloseIcon from '@mui/icons-material/Close';  
-import Visibility from '@mui/icons-material/Visibility';  
-import VisibilityOff from '@mui/icons-material/VisibilityOff';  
-import api from '../api/axiosConfig.js';  
+import React, { useState } from 'react';
+import styles from '../styles/Register.module.css';
+import { Box, Typography, Button, IconButton } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import api from '../api/axiosConfig.js';
 import { useNavigate } from 'react-router-dom';
 
-const Register = () => {  
-  const [email, setEmail] = useState('');  
-  const [password, setPassword] = useState('');  
-  const [confirmPassword, setConfirmPassword] = useState('');  
-  const [emailError, setEmailError] = useState('');  
-  const [passwordMatch, setPasswordMatch] = useState(false);  
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);  
+const Register = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordMatch, setPasswordMatch] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  // Check if email is already registered  
   const checkEmail = async (email) => {
     try {
       const response = await fetch(`http://localhost:8000/api/check-email/?email=${email}`);
@@ -38,41 +35,39 @@ const Register = () => {
     }
   };
 
-  const handleEmailBlur = () => {  
-    checkEmail(email); // Trigger validation when the email field loses focus  
-  };  
+  const handleEmailBlur = () => {
+    checkEmail(email);
+  };
 
-  const handlePasswordChange = (value) => {  
+  const handlePasswordChange = (value) => {
     setPassword(value);
     const isValidLength = value.length >= 8;
     setPasswordMatch(isValidLength && value === confirmPassword);
-  };  
+  };
 
-  const handleConfirmPasswordChange = (value) => {  
+  const handleConfirmPasswordChange = (value) => {
     setConfirmPassword(value);
     const isValidLength = password.length >= 8;
     setPasswordMatch(isValidLength && value === password);
-  };  
+  };
 
-  const togglePasswordVisibility = () => {  
-    setIsPasswordVisible(!isPasswordVisible);  
-  };  
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
 
-  const handleRegister = async (e) => {  
-    e.preventDefault();  
-
-    try {  
-      const response = await api.post('/register/', { email, password, confirm_password: confirmPassword });  
-      console.log('Registration successful:', response.data);  
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/register/', { email, password, confirm_password: confirmPassword });
+      console.log('Registration successful:', response.data);
       alert('Registration successful!');
-      navigate('/'); // Redirect to login page after successful registration
-    } catch (error) {  
-      console.error('Registration failed:', error.response ? error.response.data : error.message);  
-      alert('Registration failed. Please try again.');  
-    }  
-  };  
+      navigate('/');
+    } catch (error) {
+      console.error('Registration failed:', error.response ? error.response.data : error.message);
+      alert('Registration failed. Please try again.');
+    }
+  };
 
-  // Password Validation
   const passwordLengthValid = password.length >= 8;
   const showPasswordError = password.length > 0 && !passwordLengthValid;
 
@@ -81,86 +76,75 @@ const Register = () => {
 
   return (
     <>
-      <div className={styles.background}></div> {/* Background */}
+      <div className={styles.background}></div>
       <Box className={styles.container}>
         <Typography variant="h4" className={styles.title}>
           Register
         </Typography>
         <form onSubmit={handleRegister} className={styles.form}>
           {/* Email Field */}
-          <TextField  
-            label="Email"  
-            variant="outlined"  
-            fullWidth  
-            value={email}  
-            onChange={(e) => setEmail(e.target.value)}  
-            onBlur={handleEmailBlur}  
-            error={!!emailError}  
-            helperText={emailError}  
-            className={styles.input}  
-          />
+          <div className={styles.input}>
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={handleEmailBlur}
+              className={emailError ? styles.error : ''}
+              placeholder="Enter your email"
+            />
+            {emailError && <span className={styles.inputHelperText}>{emailError}</span>}
+          </div>
 
           {/* Password Field */}
-          <TextField
-            label="Password"
-            type={isPasswordVisible ? 'text' : 'password'}
-            variant="outlined"
-            fullWidth
-            value={password}
-            onChange={(e) => handlePasswordChange(e.target.value)}
-            className={styles.input}
-            error={showPasswordError}
-            helperText={showPasswordError ? 'Password must contain minimum 8 characters' : ''}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                  {password.length > 0 &&
-                    (passwordLengthValid ? (
-                      <CheckCircleOutlineIcon color="success" />
-                    ) : (
-                      <CloseIcon color="error" />
-                    ))}
-                </InputAdornment>
-              ),
-            }}
-          />
+          <div className={styles.input}>
+            <label htmlFor="password">Password</label>
+            <div className={styles.inputWithIcon}>
+              <input
+                id="password"
+                type={isPasswordVisible ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => handlePasswordChange(e.target.value)}
+                className={showPasswordError ? styles.error : ''}
+                placeholder="Enter your password"
+              />
+              <span className={passwordLengthValid ? styles.successIcon : styles.errorIcon}>
+                {password.length > 0 && (passwordLengthValid ? '✓' : '✕')}
+              </span>
+              <IconButton onClick={togglePasswordVisibility} className={styles.iconButton}>
+                {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </div>
+            {showPasswordError && <span className={styles.inputHelperText}>Password must contain minimum 8 characters</span>}
+          </div>
 
           {/* Confirm Password Field */}
-          <TextField
-            label="Confirm Password"
-            type={isPasswordVisible ? 'text' : 'password'}
-            variant="outlined"
-            fullWidth
-            value={confirmPassword}
-            onChange={(e) => handleConfirmPasswordChange(e.target.value)}
-            className={styles.input}
-            error={showConfirmError}
-            helperText={showConfirmError ? 'Passwords must match' : ''}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                  {confirmPassword.length > 0 &&
-                    (confirmMatches ? (
-                      <CheckCircleOutlineIcon color="success" />
-                    ) : (
-                      <CloseIcon color="error" />
-                    ))}
-                </InputAdornment>
-              ),
-            }}
-          />
+          <div className={styles.input}>
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <div className={styles.inputWithIcon}>
+              <input
+                id="confirmPassword"
+                type={isPasswordVisible ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                className={showConfirmError ? styles.error : ''}
+                placeholder="Confirm your password"
+              />
+              <span className={confirmMatches ? styles.successIcon : styles.errorIcon}>
+                {confirmPassword.length > 0 && (confirmMatches ? '✓' : '✕')}
+              </span>
+              <IconButton onClick={togglePasswordVisibility} className={styles.iconButton}>
+                {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </div>
+            {showConfirmError && <span className={styles.inputHelperText}>Passwords must match</span>}
+          </div>
 
           {/* Submit Button */}
           <Button
             type="submit"
             variant="contained"
-            color="primary"
             className={styles.button}
             disabled={!passwordMatch || !!emailError || !email || !password}
           >
