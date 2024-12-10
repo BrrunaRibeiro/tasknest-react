@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from '../styles/Register.module.css';
-import { Box, Typography, Button, IconButton } from '@mui/material';
+import { Box, Typography, Button, IconButton, Snackbar, Alert } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import api from '../api/axiosConfig.js';
@@ -13,6 +13,7 @@ const Register = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordMatch, setPasswordMatch] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
   const navigate = useNavigate();
 
@@ -58,14 +59,17 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/register/', { email, password, confirm_password: confirmPassword });
-      console.log('Registration successful:', response.data);
-      alert('Registration successful!');
-      navigate('/');
+      await api.post('/register/', { email, password, confirm_password: confirmPassword });
+      setSnackbar({ open: true, message: 'Registration successful!', severity: 'success' });
+      setTimeout(() => navigate('/'), 3000); // Redirect after a short delay
     } catch (error) {
       console.error('Registration failed:', error.response ? error.response.data : error.message);
-      alert('Registration failed. Please try again.');
+      setSnackbar({ open: true, message: 'Registration failed. Please try again.', severity: 'error' });
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   const passwordLengthValid = password.length >= 8;
@@ -152,6 +156,18 @@ const Register = () => {
           </Button>
         </form>
       </Box>
+
+      {/* Snackbar for user feedback */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Adjust position
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
