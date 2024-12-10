@@ -6,17 +6,19 @@ import TaskCreate from './components/TaskCreate';
 import TaskDetail from './components/TaskDetail';
 import TaskList from './components/TaskList';
 import Dashboard from './pages/Dashboard';
+import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
 
 const AppRoutes = ({ onLogin }) => {
   return (
     <Routes>
       {/* Login and Register Routes */}
-      <Route path="/" element={<Login onLogin={onLogin} />} />
+      <Route path="/login" element={<Login onLogin={onLogin} />} />
       <Route path="/register" element={<Register />} />
 
       {/* Dashboard and Task Management Routes */}
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/tasks" element={<TaskList />} />
       <Route path="/create-task" element={<TaskCreate />} />
       <Route path="/tasks/:id" element={<TaskDetail />} />

@@ -1,0 +1,175 @@
+:root {
+    --primary-color: #aca3d3;
+    --secondary-color: #9e9cc3;
+    --highlight-color: #cd584f;
+    --background-color: #ebebea;
+    --light-font-color: #ffffff;
+    --dark-font-color: #2b2b2b;
+    --muted-background-color: #f5f5f5;
+    --accent-contrast-color: #ccc4e7;
+    --highlight-contrast-color: #6c7c2c;
+    --border-radius: 12px;
+    --box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    --light-green: #ccd584;
+    --light-green-bg: #eff2d8;
+  }
+  
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at bottom right, var(--light-green-bg) 25%, var(--background-color) 75%);
+    z-index: -1;
+  }
+  
+  .container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  /* Hero Section */
+  .hero {
+    margin-bottom: 40px;
+  }
+  
+  .title {
+    font-family: 'lora', serif;
+    font-size: 3rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+  
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--dark-font-color);
+  }
+  
+  .cta {
+    margin-top: 20px;
+  }
+  
+  .button {
+    padding: 12px 20px;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .registerButton {
+    background-color: var(--primary-color);
+    color: var(--light-font-color);
+  }
+  
+  .registerButton:hover {
+    background-color: var(--secondary-color);
+  }
+  
+  /* Features Section */
+  .featureContainer {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .card {
+    background-color: var(--light-font-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 25px;
+    width: 350px;
+    max-width: 100%;
+  }
+  
+  .cardTitle {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
+  
+  .cardContent {
+    font-size: 1rem;
+    color: var(--dark-font-color);
+  }
+  
+  /* Testimonials Section */
+  .testimonials {
+    margin-top: 60px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
+  
+  .testimonialContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .testimonial {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--dark-font-color);
+    background-color: var(--muted-background-color);
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .cite {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--accent-contrast-color);
+    margin-top: 10px;
+    text-align: right;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 480px) {
+    .title {
+      font-size: 2rem;
+    }
+  
+    .subtitle {
+      font-size: 1rem;
+    }
+  
+    .card {
+      padding: 20px;
+    }
+  
+    .cardTitle {
+      font-size: 1.25rem;
+    }
+  
+    .cardContent {
+      font-size: 0.9rem;
+    }
+  
+    .testimonial {
+      font-size: 0.9rem;
+    }
+  
+    .sectionTitle {
+      font-size: 1rem;
+    }
+  }
+  

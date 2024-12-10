@@ -22,7 +22,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
   const handleLogout = () => {
     onLogout();
     setAnchorEl(null);
-    navigate('/landing'); // Redirect to landing page
+    navigate('/'); // Redirect to landing page
   };
 
   const toggleDropdown = () => {
@@ -33,6 +33,9 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
     <nav className={styles.navbar}>
       <div className={styles.logoContainer}>
         <img src={logo} alt="Logo" className={styles.logo} />
+        <Link to="/" className={styles.navLink}>
+          Home
+        </Link>
         <Link to="/dashboard" className={styles.navLink}>
           Dashboard
         </Link>
@@ -41,7 +44,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
       <div className={`${styles.navLinks} ${styles.desktopOnly}`}>
         {!isLoggedIn ? (
           <>
-            <Link to="/" className={`${styles.button} ${styles.loginButton}`}>
+            <Link to="/login" className={`${styles.button} ${styles.loginButton}`}>
               Login
             </Link>
             <Link to="/register" className={styles.button}>
@@ -65,7 +68,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
               }}
             >
               <MenuItem disabled className={styles.menuItem}>
-                Welcome, {user?.email || 'User'}
+                Welcome {user?.username || 'User'}
               </MenuItem>
               <MenuItem onClick={handleLogout} className={styles.menuItem}>
                 <LogoutIcon style={{ marginRight: '8px' }} />
@@ -86,7 +89,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
         <div className={`${styles.dropdownMenu} ${styles.mobileOnly}`}>
           {!isLoggedIn ? (
             <>
-              <Link to="/" className={styles.dropdownLink}>
+              <Link to="/login" className={styles.dropdownLink}>
                 Login
               </Link>
               <Link to="/register" className={styles.dropdownLink}>
