@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/NavBar.module.css';
 import { Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../assets/images/favicon-32x32.png';
 
-const NavBar = ({ isLoggedIn, user }) => {
+const NavBar = ({ isLoggedIn, user, onLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const navigate = useNavigate();
 
   const handleAvatarClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -18,9 +19,10 @@ const NavBar = ({ isLoggedIn, user }) => {
     setAnchorEl(null);
   };
 
-  const handleLogout = async () => {
-    handleMenuClose();
-    console.log('Logged out');
+  const handleLogout = () => {
+    onLogout();
+    setAnchorEl(null);
+    navigate('/landing'); // Redirect to landing page
   };
 
   const toggleDropdown = () => {
@@ -63,7 +65,7 @@ const NavBar = ({ isLoggedIn, user }) => {
               }}
             >
               <MenuItem disabled className={styles.menuItem}>
-                Welcome, {user?.username || 'User'}
+                Welcome, {user?.email || 'User'}
               </MenuItem>
               <MenuItem onClick={handleLogout} className={styles.menuItem}>
                 <LogoutIcon style={{ marginRight: '8px' }} />
