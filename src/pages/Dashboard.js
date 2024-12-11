@@ -1,13 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import TaskList from '../components/TaskList';
 import styles from '../styles/Dashboard.module.css';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, Snackbar, Alert, Dialog, DialogActions, DialogTitle } from '@mui/material';
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null); // Track selected task for confirmation
+  const [actionType, setActionType] = useState(''); // 'delete' or 'complete'
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
@@ -15,9 +22,11 @@ const Dashboard = () => {
   });
   const [filters, setFilters] = useState({
     priority: '',
-    state: '',
+    state: 'open', // Default filter to show only open tasks
     category: '',
   });
+
+  const location = useLocation();
 
   // Fetch tasks with updated filters and pagination
   const fetchTasks = useCallback(async () => {
@@ -30,6 +39,8 @@ const Dashboard = () => {
         page_size: pagination.pageSize,
         ...filters,
       };
+      if (!params.priority) delete params.priority;
+      if (!params.state) delete params.state;
 
       const response = await api.get('/tasks/', { params });
       setTasks(response.data.results); // Assuming 'results' holds task data
@@ -45,10 +56,70 @@ const Dashboard = () => {
     }
   }, [pagination.page, pagination.pageSize, filters]);
 
-  // Update data when filters or pagination changes
+  // Handle delete task
+  const handleDeleteTask = async () => {
+    if (!selectedTask) return;
+    try {
+      const response = await api.delete(`/tasks/${selectedTask.id}/`);
+      if (response.status === 204 || response.status === 200) {
+        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== selectedTask.id)); // Remove task locally
+        setSnackbarMessage('Task deleted successfully!');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      }
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+      setSnackbarMessage('Failed to delete task. Please try again.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    } finally {
+      setOpenDialog(false);
+      setSelectedTask(null);
+      setActionType('');
+    }
+  };
+
+  // Handle mark task as completed
+  const handleMarkComplete = async () => {
+    if (!selectedTask) return;
+    try {
+      const response = await api.patch(`/tasks/${selectedTask.id}/`, { state: 'completed' });
+      if (response.status === 200) {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === selectedTask.id ? { ...task, state: 'completed' } : task
+          )
+        ); // Update task locally
+        setSnackbarMessage('Task marked as completed!');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      }
+    } catch (err) {
+      console.error('Failed to mark task as complete:', err);
+      setSnackbarMessage('Failed to update task. Please try again.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    } finally {
+      setOpenDialog(false);
+      setSelectedTask(null);
+      setActionType('');
+    }
+  };
+
+  // Show confirmation dialog
+  const showConfirmationDialog = (task, action) => {
+    setSelectedTask(task);
+    setActionType(action); // 'delete' or 'complete'
+    setOpenDialog(true);
+  };
+
+  // Update data when filters, pagination, or navigation state changes
   useEffect(() => {
+    if (location.state?.refresh) {
+      setPagination((prev) => ({ ...prev, page: 1 }));
+    }
     fetchTasks();
-  }, [fetchTasks]);
+  }, [fetchTasks, location.state?.refresh]);
 
   // Handle filter updates
   const handleFilterChange = (filterName, value) => {
@@ -107,7 +178,39 @@ const Dashboard = () => {
         pagination={pagination}
         onFilterChange={handleFilterChange}
         onPageChange={handlePageChange}
+        onDeleteTask={(task) => showConfirmationDialog(task, 'delete')}
+        onMarkComplete={(task) => showConfirmationDialog(task, 'complete')}
       />
+      {/* Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>
+          {actionType === 'delete'
+            ? 'Are you sure you want to delete this task?'
+            : 'Are you sure you want to mark this task as completed?'}
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            onClick={actionType === 'delete' ? handleDeleteTask : handleMarkComplete}
+            color={actionType === 'delete' ? 'error' : 'primary'}
+            variant="contained"
+          >
+            {actionType === 'delete' ? 'Delete' : 'Mark as Complete'}
+          </Button>
+          <Button onClick={() => setOpenDialog(false)} color="inherit" variant="outlined">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Snackbar for feedback */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -1,10 +1,7 @@
 # TaskManagerApp
 
 <p align="center">
-    <img src="readme_assets/amiresponsive.png" width=600>
-</p>
-<p align="center">
-    Image generated using <a href="https://ui.dev/amiresponsive" target="_blank">https://ui.dev/amiresponsive</a>
+    <img src="readmeassets/landing.png" width=600>
 </p>
 
 ---
@@ -95,7 +92,6 @@ The application follows a clean and modern color scheme, designed for simplicity
 - **Body Font**: Arial for content and UI clarity.
 - **Enhance Font**: Lora (Italic) for hero sections and inspirational text.
 
-
 ---
 
 ## Core Pages
@@ -107,7 +103,7 @@ A visually appealing introduction to TaskManagerApp with:
 - Testimonials and engaging call-to-action elements.
 
 <p align="center">
-    <img src="" width=500>
+    <img src="readmeassets/landing.png" width=500>
 </p>
 
 ---
@@ -118,7 +114,7 @@ A simple form allowing users to create an account with:
 - Intuitive error/success indicators.
 
 <p align="center">
-    <img src="" width=500>
+    <img src="readmeassets/register.png" width=500>
 </p>
 
 ---
@@ -129,7 +125,7 @@ A quick and secure login experience featuring:
 - Error handling with user-friendly notifications.
 
 <p align="center">
-    <img src="" width=500>
+    <img src="readmeassets/login.png" width=500>
 </p>
 
 ---
@@ -157,6 +153,9 @@ The application uses React state hooks for:
 ## Testing and Validation
 
 - **Manual Testing**: Tasks were tested across major browsers and devices to ensure responsiveness and functionality.
+
+INSERT TESTING.MD
+
 - **Accessibility**: Validated with WAVE tools and Lighthouse for 100% accessibility scores.
 - **Code Validation**: Passed through ESLint and W3C CSS Validator.
 
@@ -171,10 +170,7 @@ The application uses React state hooks for:
 
 ## Deployment
 
-To deploy the app:
-1. Clone the repository: `git clone <repository-url>`
-2. Install dependencies: `npm install`
-3. Start the development server: `npm start`
+
 
 ---
 
@@ -185,5 +181,5 @@ To deploy the app:
 - TaskManagerApp design inspired by leading task management tools.
 
 ### Media
-- Icons by [FontAwesome](https://fontawesome.com/).
-- Hero image sourced from [Unsplash](https://unsplash.com/).
+- Icons by [MUI]().
+

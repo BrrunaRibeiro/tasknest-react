@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert, 
-  MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Select, FormControl, InputLabel, OutlinedInput, Checkbox, ListItemText 
+import {
+  Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert,
+  MenuItem, Dialog, DialogTitle, DialogContent, DialogActions,
+  Select, FormControl, InputLabel, IconButton
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
@@ -12,6 +12,7 @@ import api from '../api/axiosConfig';
 import styles from '../styles/TaskCreate.module.css';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 // Define today as the start of the current day, local time
 const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
@@ -29,13 +30,11 @@ const TaskCreate = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [error, setError] = useState('');
-
   const [categories, setCategories] = useState([]);
-  const [users, setUsers] = useState([]);
-
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [categoryError, setCategoryError] = useState('');
+  const [attachmentPreview, setAttachmentPreview] = useState(null);
 
   const priorities = ['low', 'medium', 'high'];
 
@@ -47,7 +46,6 @@ const TaskCreate = () => {
       due_date: null,
       priority: 'medium',
       category_id: '',
-      owner_ids: [],
       attachment: null
     }
   });
@@ -56,26 +54,14 @@ const TaskCreate = () => {
   const loadCategories = async () => {
     try {
       const response = await api.get('/categories/');
-      console.log('Categories response:', response.data);
       setCategories(Array.isArray(response.data.results) ? response.data.results : []);
     } catch (err) {
       console.error('Failed to load categories:', err);
     }
   };
 
-  // Load users
-  const loadUsers = async () => {
-    try {
-      const response = await api.get('/users/');
-      setUsers(Array.isArray(response.data) ? response.data : []);
-    } catch (err) {
-      console.error('Failed to load users:', err);
-    }
-  };
-
   useEffect(() => {
     loadCategories();
-    loadUsers();
   }, []);
 
   const handleCreateCategory = async () => {
@@ -96,6 +82,20 @@ const TaskCreate = () => {
     } catch (err) {
       console.error('Failed to create category:', err);
       setCategoryError('Failed to create category. Please try again.');
+    }
+  };
+
+  const handleAttachmentChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (validImageTypes.includes(file.type)) {
+        const reader = new FileReader();
+        reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
+        reader.readAsDataURL(file);
+      } else {
+        setAttachmentPreview({ url: null, type: 'file' }); // Non-image file
+      }
     }
   };
 
@@ -121,11 +121,6 @@ const TaskCreate = () => {
       if (data.attachment && data.attachment[0]) {
         formData.append('attachment', data.attachment[0]);
       }
-      if (data.owner_ids && data.owner_ids.length > 0) {
-        data.owner_ids.forEach((ownerId) => {
-          formData.append('owner_ids', ownerId);
-        });
-      }
 
       const response = await api.post('/create-task/', formData, {
         headers: {
@@ -137,7 +132,7 @@ const TaskCreate = () => {
         setSnackbarMessage('Task created successfully!');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-        navigate('/dashboard');
+        navigate('/dashboard', { state: { refresh: true } });x
       }
     } catch (error) {
       if (error.response) {
@@ -158,7 +153,6 @@ const TaskCreate = () => {
       <Typography variant="h4" className={styles.title}>Create New Task</Typography>
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-
         {/* Title Field */}
         <TextField
           label="Task Title"
@@ -183,7 +177,7 @@ const TaskCreate = () => {
           className={styles.input}
         />
 
-        {/* Due Date Field using MUI DatePicker */}
+        {/* Due Date Field */}
         <Controller
           name="due_date"
           control={control}
@@ -204,129 +198,88 @@ const TaskCreate = () => {
           )}
         />
 
-        {/* Priority Field using ToggleButtonGroup */}
+        {/* Priority Field */}
         <Controller
           name="priority"
           control={control}
-          defaultValue="medium"
           render={({ field }) => (
             <Box className={styles.input}>
-              <Typography variant="subtitle1" gutterBottom>
-                Priority
-              </Typography>
+              <Typography variant="subtitle1" gutterBottom>Priority</Typography>
               <ToggleButtonGroup
                 value={field.value}
                 exclusive
-                onChange={(event, newPriority) => {
-                  if (newPriority !== null) {
-                    field.onChange(newPriority);
-                  }
-                }}
-                aria-label="priority"
+                onChange={(event, newPriority) => newPriority && field.onChange(newPriority)}
               >
                 {priorities.map(p => (
-                  <ToggleButton key={p} value={p} aria-label={p + ' priority'}>
+                  <ToggleButton key={p} value={p}>
                     {p.charAt(0).toUpperCase() + p.slice(1)}
                   </ToggleButton>
                 ))}
               </ToggleButtonGroup>
-              {errors.priority && <p className={styles.error}>{errors.priority.message}</p>}
             </Box>
           )}
         />
 
         {/* Category Field */}
-        {categories.length === 0 ? (
-          <Box className={styles.input} display="flex" flexDirection="column" alignItems="flex-start">
-            <Typography variant="body1" gutterBottom>
-              You don't have any categories yet. At least one category is required to create a new task.
-            </Typography>
-            <Button variant="contained" color="secondary" onClick={() => setOpenCategoryDialog(true)}>
-              Create Category
-            </Button>
-          </Box>
-        ) : (
-          <Box display="flex" alignItems="center" className={styles.input}>
-            <FormControl fullWidth>
-              <InputLabel id="category-label">Category</InputLabel>
-              <Controller
-                name="category_id"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    labelId="category-label"
-                    label="Category"
-                  >
-                    <MenuItem value="">None</MenuItem>
-                    {categories.map(cat => (
-                      <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <Button variant="contained" color="secondary" onClick={() => setOpenCategoryDialog(true)} style={{ marginLeft: '10px' }}>
-              Create Category
-            </Button>
-          </Box>
-        )}
-
-        {/* Owners Field (Multi-select) - If no backend support, disable and inform */}
         <FormControl fullWidth className={styles.input}>
-          <InputLabel id="owners-label">Additional Owners</InputLabel>
+          <InputLabel id="category-label">Category</InputLabel>
           <Controller
-            name="owner_ids"
+            name="category_id"
             control={control}
-            defaultValue={[]}
             render={({ field }) => (
-              <Select
-                {...field}
-                labelId="owners-label"
-                label="Additional Owners"
-                multiple
-                disabled={users.length === 0} // Disable if no users loaded or no backend support
-                input={<OutlinedInput label="Additional Owners" />}
-                renderValue={(selected) => {
-                  const selectedOwners = users.filter(user => selected.includes(user.id));
-                  return selectedOwners.map(u => u.username).join(', ');
-                }}
-              >
-                {users.length === 0 ? (
-                  <MenuItem disabled>
-                    No owners available. This functionality is not currently supported.
-                  </MenuItem>
-                ) : (
-                  users.map((u) => (
-                    <MenuItem key={u.id} value={u.id}>
-                      <Checkbox checked={field.value.indexOf(u.id) > -1} />
-                      <ListItemText primary={u.username} />
-                    </MenuItem>
-                  ))
-                )}
+              <Select {...field} labelId="category-label" label="Category">
+                <MenuItem value="">None</MenuItem>
+                {categories.map(cat => (
+                  <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                ))}
               </Select>
             )}
           />
         </FormControl>
+        <Button
+          onClick={() => setOpenCategoryDialog(true)}
+          style={{ backgroundColor: '#aca3d3', color: '#fff', marginLeft: '10px' }}
+          variant="contained"
+        >
+          Create Category
+        </Button>
 
         {/* Attachment Field */}
         <Box className={styles.input}>
-          <input
-            type="file"
-            {...register('attachment')}
-            accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          />
-          {errors.attachment && <p className={styles.error}>{errors.attachment.message}</p>}
+          <label htmlFor="attachment">
+            <input
+              id="attachment"
+              type="file"
+              hidden
+              {...register('attachment')}
+              onChange={handleAttachmentChange}
+            />
+            <IconButton component="span">
+              <AttachFileIcon />
+            </IconButton>
+          </label>
+          {attachmentPreview && attachmentPreview.type === 'image' && (
+            <img
+              src={attachmentPreview.url}
+              alt="Attachment Preview"
+              className={styles.attachmentPreview}
+            />
+          )}
+          {attachmentPreview && attachmentPreview.type === 'file' && (
+            <Typography variant="body2" color="textSecondary">
+              File uploaded successfully. <br/>
+              <small>Preview is only available for images with format '.jpeg', '.png', '.webp'.</small>
+            </Typography>
+          )}
         </Box>
 
         {/* Submit Button */}
         <Button
           type="submit"
           variant="contained"
-          color="primary"
+          style={{ backgroundColor: '#aca3d3', color: '#fff' }}
           className={styles.button}
-          disabled={isLoading || Object.keys(errors).length > 0}
+          disabled={isLoading}
         >
           {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Create Task'}
         </Button>
@@ -334,13 +287,22 @@ const TaskCreate = () => {
 
       {/* Snackbar for feedback */}
       <Snackbar
-        open={openSnackbar}
+        open={!!error || openSnackbar}
         autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
+        onClose={() => {
+          setOpenSnackbar(false);
+          setError('');
+        }}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-          {error && <div className={styles.error} style={{ marginTop: '8px' }}>{error}</div>}
+        <Alert
+          onClose={() => {
+            setOpenSnackbar(false);
+            setError('');
+          }}
+          severity={error ? 'error' : snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {error || snackbarMessage}
         </Alert>
       </Snackbar>
 
@@ -370,7 +332,7 @@ const TaskCreate = () => {
           <Button onClick={() => setOpenCategoryDialog(false)} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleCreateCategory} color="primary" variant="contained">
+          <Button onClick={handleCreateCategory} style={{ backgroundColor: '#ccd584', color: '#fff' }}>
             Create
           </Button>
         </DialogActions>

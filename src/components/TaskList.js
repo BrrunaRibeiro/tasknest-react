@@ -1,17 +1,21 @@
 import React, { useRef } from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Button,
+import {
+  Box, Typography, List, ListItem, ListItemText, Button,
   ListItemButton, FormControl, InputLabel, MenuItem, Select, Slide,
+  IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/TaskList.module.css';
 
-const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) => {
+const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange, onDeleteTask, onMarkComplete }) => {
   const navigate = useNavigate();
   const containerRef = useRef(null);
 
   const handleTaskClick = (taskId) => {
     navigate(`/tasks/${taskId}`);
   };
+
+  console.log('Tasks passed to TaskList:', tasks);
 
   return (
     <Box className={styles.container}>
@@ -45,7 +49,7 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) 
       </Box>
 
       {/* Task List */}
-      <Box ref={containerRef} sx={{ p: 2, height: '400px', overflow: 'hidden' }}>
+      <Box ref={containerRef} sx={{ p: 2, height: '550px', overflow: 'hidden' }}>
         {tasks.length === 0 ? (
           <Typography className={styles.noTasksMessage}>No tasks available</Typography>
         ) : (
@@ -56,6 +60,23 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) 
                   <ListItemButton onClick={() => handleTaskClick(task.id)}>
                     <ListItemText primary={task.title} secondary={task.description} />
                   </ListItemButton>
+
+                  {/* Delete Button */}
+                  <IconButton
+                    className={styles.deleteButton}
+                    onClick={() => onDeleteTask(task)}
+                  >
+                    🗑️
+                  </IconButton>
+
+                  {/* Mark as Completed Button */}
+                  <Button
+                    variant="contained"
+                    className={styles.markCompletedButton}
+                    onClick={() => onMarkComplete(task)}
+                  >
+                    Mark as Completed
+                  </Button>
                 </ListItem>
               </Slide>
             ))}
@@ -67,17 +88,17 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange }) 
       <Box className={styles.pagination}>
         <Button
           className={styles.paginationButton}
-          disabled={pagination.page <= 1} // Disable if on the first page
+          disabled={pagination.page <= 1}
           onClick={() => onPageChange(pagination.page - 1)}
         >
           Previous
         </Button>
         <Typography variant="body1">
-          Page {pagination.page} of {pagination.totalPages || 1} {/* Ensure totalPages defaults to 1 */}
+          Page {pagination.page} of {pagination.totalPages || 1}
         </Typography>
         <Button
           className={styles.paginationButton}
-          disabled={pagination.page >= 1} // Disable if on the last page
+          disabled={pagination.page >= pagination.totalPages}
           onClick={() => onPageChange(pagination.page + 1)}
         >
           Next

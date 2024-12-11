@@ -18,8 +18,9 @@
   .container {  
     max-width: 600px;  
     margin: 0 auto;  
+    margin-top: 25px;
     padding: 20px;  
-    background-color: var(--secondary-color);  
+    background-color: var(--muted-background-color);  
     border-radius: var(--border-radius);  
     box-shadow: var(--box-shadow);  
   }  
@@ -29,19 +30,30 @@
     font-weight: bold;  
     color: var(--primary-color);  
     text-align: center;  
-    margin-bottom: 20px;  
+    margin-bottom: 25px;  
+    
   }  
   
   .form {  
+    margin-top: 25px;
     display: flex;  
     flex-direction: column;  
     gap: 15px;  
   }  
   
   .input {  
-    margin-bottom: 15px;  
+    margin-bottom: 15px;
   }  
   
   .button {  
     align-self: flex-end;  
   }  
+
+  #button-category {
+    margin-left: 10px;
+    background-color: var(--secondary-color);
+  }
+
+  .attachmentPreview {
+    max-width: 150px;
+  }
