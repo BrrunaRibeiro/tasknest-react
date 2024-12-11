@@ -6,13 +6,15 @@ import styles from '../styles/TaskDetail.module.css';
 import { 
   Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert, 
   MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Select, FormControl, InputLabel
+  Select, FormControl, InputLabel, IconButton
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+// import { Dashboard } from '@mui/icons-material';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -30,6 +32,7 @@ const TaskDetail = () => {
   const [task, setTask] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [attachmentPreview, setAttachmentPreview] = useState(null);
 
   // Snackbar states
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -91,6 +94,20 @@ const TaskDetail = () => {
     }
   };
 
+  const handleAttachmentChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (validImageTypes.includes(file.type)) {
+        const reader = new FileReader();
+        reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
+        reader.readAsDataURL(file);
+      } else {
+        setAttachmentPreview({ url: null, type: 'file' }); // Non-image file
+      }
+    }
+  };
+
   useEffect(() => {
     fetchTaskDetail();
     loadCategories();
@@ -133,6 +150,7 @@ const TaskDetail = () => {
         setOpenSnackbar(true);
         // Refresh the task details after update
         fetchTaskDetail();
+        navigate('/dashboard', { state: { refresh: true } });
       }
     } catch (error) {
       console.error('Failed to update task:', error);
@@ -141,6 +159,26 @@ const TaskDetail = () => {
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMarkAsComplete = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.patch(`/tasks/${id}/`, { state: 'completed' });
+      if (response.status === 200) {
+        setSnackbarMessage('Task marked as complete!');
+        setSnackbarSeverity('success');
+        fetchTaskDetail(); 
+        navigate('/dashboard', { state: { refresh: true } });
+      }
+    } catch (error) {
+      console.error('Failed to mark task as complete:', error);
+      setSnackbarMessage('Failed to mark task as complete.');
+      setSnackbarSeverity('error');
+    } finally {
+      setOpenSnackbar(true);
       setIsLoading(false);
     }
   };
@@ -155,7 +193,6 @@ const TaskDetail = () => {
         setSnackbarMessage('Task deleted successfully!');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-        // Redirect to dashboard after deletion
         navigate('/dashboard');
       }
     } catch (error) {
@@ -298,38 +335,69 @@ const TaskDetail = () => {
               )}
             />
           </FormControl>
-          <Button variant="contained" color="secondary" onClick={() => setOpenCategoryDialog(true)} style={{ marginLeft: '10px' }}>
+          <Button variant="text" color="secondary" onClick={() => setOpenCategoryDialog(true)} style={{ marginLeft: '10px' }}>
             Create Category
           </Button>
         </Box>
 
         {/* Attachment Field */}
         <Box className={styles.input}>
-          <Typography variant="subtitle1" gutterBottom>Attachment</Typography>
-          <input
-            type="file"
-            {...register('attachment')}
-            accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          />
-          {errors.attachment && <p className={styles.error}>{errors.attachment.message}</p>}
+          <label htmlFor="attachment">
+            <input
+              id="attachment"
+              type="file"
+              hidden
+              {...register('attachment')}
+              onChange={handleAttachmentChange}
+            />
+            <IconButton component="span">
+              <AttachFileIcon />
+            <small>Add an attachment</small>
+            </IconButton>
+          </label>
+          {attachmentPreview && attachmentPreview.type === 'image' && (
+            <img
+              src={attachmentPreview.url}
+              alt="Attachment Preview"
+              className={styles.attachmentPreview}
+            />
+          )}
+          {attachmentPreview && attachmentPreview.type === 'file' && (
+            <Typography variant="body2" color="textSecondary">
+              File uploaded successfully. <br/>
+              <small>Preview is only available for images with format '.jpeg', '.png', '.webp'.</small>
+            </Typography>
+          )}
         </Box>
 
         {/* Actions */}
         <Box className={styles.actions}>
           <Button
-            type="submit"
             variant="contained"
-            color="primary"
+            color="success"
+            disabled={isLoading}
+            onClick={handleMarkAsComplete}
+            style={{ marginRight: '10px', backgroundColor: '#aca3d3' }}
+          >
+            Mark as Complete
+          </Button>
+          <Button
+            type="submit"
+            variant="outlined"
+            color="white"
             disabled={isLoading || Object.keys(errors).length > 0}
-            style={{ marginRight: '10px' }}
+            style={{ marginRight: '10px', backgroundColor: '#aca3d3', color:'#fff', border: '1px solid #fff' }}
           >
             {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
           </Button>
+          
           <Button
-            variant="contained"
+            variant="outlined"
             color="error"
             disabled={isLoading}
             onClick={onDeleteTask}
+            style={{ marginRight: '10px',
+               backgroundColor: '#aca3d3', color:'#fff', border: '1px solid #fff' }}
           >
             Delete Task
           </Button>
