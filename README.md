@@ -1,4 +1,4 @@
-# TaskManagerApp
+# TaskNest
 
 <p align="center">
     <img src="readmeassets/landing.png" width=600>
@@ -8,7 +8,7 @@
 
 ## Project Goals
 
-TaskManagerApp is designed to simplify task management by providing a centralized platform to plan, organize, and track tasks effectively. Its key goals include:
+TaskNest is designed to simplify task management by providing a centralized platform to plan, organize, and track tasks effectively. Its key goals include:
 
 1. **Ease of Use**: A minimalistic and user-friendly interface designed for individuals and teams.
 2. **Feature-Focused Development**: Core features are prioritized to meet user needs effectively while leaving room for future enhancements.
@@ -18,7 +18,7 @@ TaskManagerApp is designed to simplify task management by providing a centralize
 
 ## Table of Contents
 
-- [TaskManagerApp](#taskmanagerapp)
+- [TaskNest](#TaskNest)
   - [Project Goals](#project-goals)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
@@ -47,6 +47,17 @@ TaskManagerApp is designed to simplify task management by providing a centralize
 - **Snappy Notifications**: User-friendly snackbars replace intrusive alerts.
 - **Role-Based Views**: Different functionalities for regular users and administrators.
 
+All Pages on the website are responsive and have:
+A favicon in the browser tab.
+<p align="left">
+    <img src="src/assets/images/favicon-32x32.png" width=60>
+</p>
+
+
+### The 404 Error Page
+
+The 404 error page displays an error message to the user and a link to go back to the login page.
+
 ### CRUD Functionality
 
 This project implements full **Create**, **Read**, **Update**, and **Delete** functionality via the React-based UI and Django Rest Framework API.
@@ -57,20 +68,25 @@ This project implements full **Create**, **Read**, **Update**, and **Delete** fu
 
 #### **Read**
 - Users can view a list of tasks they have created, along with their details (title, description, deadline, and status).
-- Logged-in users can view their profile information, including their email address.
+- Logged-in users can view their login status information such as their email address under the "Avatar" icon.
 
 #### **Update**
-- Users can update their tasks, modifying details such as the title, description, and deadline.
-- Profile updates allow users to change their passwords.
+- Users can update their tasks, modifying details such as the title, description, and deadline and more.
 
 #### **Delete**
 - Users can delete tasks they no longer need.
-- Users can delete their accounts, removing their profile and tasks from the system.
 
-This core CRUD functionality empowers users to efficiently manage their tasks and profiles, providing an intuitive and user-friendly experience.
+This core CRUD functionality empowers users to efficiently manage their tasks, providing an intuitive and user-friendly experience.
 
 ## Design
 
+### Wireframe
+
+<p align="left">
+    <img src="readmeassets/wireframetasks.png" width=600>
+</p>
+
+---
 
 ### Colors
 The application follows a clean and modern color scheme, designed for simplicity and accessibility:
@@ -97,7 +113,7 @@ The application follows a clean and modern color scheme, designed for simplicity
 ## Core Pages
 
 ### Landing Page
-A visually appealing introduction to TaskManagerApp with:
+A visually appealing introduction to TaskNest app with:
 - Hero section featuring the tagline "Never Miss a Task."
 - Highlighted features presented in cards with rounded edges.
 - Testimonials and engaging call-to-action elements.
@@ -132,9 +148,8 @@ A quick and secure login experience featuring:
 
 ### Dashboard
 The central hub for managing tasks:
-- Add, edit, and delete tasks.
-- Snappy task filtering and categorization.
-- Dynamic role-based actions for users and admins.
+- View, edit, and delete tasks.
+- Includes Task filtering
 
 <p align="center">
     <img src="" width=500>
@@ -148,13 +163,54 @@ The application uses React state hooks for:
 - **Task Updates**: Automatically refreshing the task list on changes.
 - **UI Notifications**: Triggering Snackbars for user feedback.
 
+## Reusable Components
+
+### 1. **Navbar**
+- **File Location**: `src/components/Navbar.js`
+- **Description**: A responsive navigation bar for managing navigation links across the app.
+- **Features**:
+  - Displays different links for authenticated and unauthenticated users.
+  - Handles logout functionality.
+  - Fully responsive for mobile and desktop views.
+
 ---
+
+### 2. **Login Form**
+- **File Location**: `src/components/LoginForm.js`
+- **Description**: A reusable form for user login.
+- **Features**:
+  - Accepts `username` and `password` as inputs.
+  - Includes client-side validation.
+  - Integrates with the backend for JWT-based authentication.
+
+---
+
+### 3. **Register Form**
+- **File Location**: `src/components/RegisterForm.js`
+- **Description**: A reusable form for user registration.
+- **Features**:
+  - Collects `email`, `password`, and `confirm password`.
+  - Includes validation for password matching.
+  - Sends data to the backend for user registration.
+
+---
+
+### 4. **Task List**
+- **File Location**: `src/components/TaskList.js`
+- **Description**: Displays a list of tasks with filtering and pagination functionality.
+- **Features**:
+  - Dynamic task rendering with filters like `priority`, `state`, and `category`.
+  - Integrated pagination for large task datasets.
+  - Includes action buttons for "Delete" and "Mark as Completed".
+
 
 ## Testing and Validation
 
 - **Manual Testing**: Tasks were tested across major browsers and devices to ensure responsiveness and functionality.
 
-INSERT TESTING.MD
+## Testing
+
+Please refer to [TESTING.md](testing.md) file for all testing carried out.
 
 - **Accessibility**: Validated with WAVE tools and Lighthouse for 100% accessibility scores.
 - **Code Validation**: Passed through ESLint and W3C CSS Validator.
@@ -176,10 +232,21 @@ INSERT TESTING.MD
 
 ## Credits
 
-### Code
-- Snackbar implementation adapted from Material-UI documentation.
-- TaskManagerApp design inspired by leading task management tools.
+### Icons
+- **Source**: [Material Icons by Google](https://mui.com/material-ui/material-icons/)
+- **Description**: Icons used throughout the app (e.g., delete, edit, check) are from Material Icons.
 
-### Media
-- Icons by [MUI]().
+### Favicon and Logo
+- **Source**: [Favicon.io](https://favicon.io/)
+- **Description**: The favicon and logo for the application were generated using Favicon.io.
+
+### Acknowledgments
+
+I would like to acknowledge the following people:
+
+* Jubril - My Code Institute Mentor.
+* My family and friends for testing the application.
+
+
+
 

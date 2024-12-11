@@ -132,7 +132,7 @@ const TaskCreate = () => {
         setSnackbarMessage('Task created successfully!');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-        navigate('/dashboard', { state: { refresh: true } });x
+        navigate('/dashboard', { state: { refresh: true } });
       }
     } catch (error) {
       if (error.response) {
@@ -155,7 +155,7 @@ const TaskCreate = () => {
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         {/* Title Field */}
         <TextField
-          label="Task Title"
+          label="Task Title*"
           variant="outlined"
           fullWidth
           {...register('title')}
@@ -166,7 +166,7 @@ const TaskCreate = () => {
 
         {/* Description Field */}
         <TextField
-          label="Description"
+          label="Description*"
           variant="outlined"
           fullWidth
           multiline
@@ -183,7 +183,7 @@ const TaskCreate = () => {
           control={control}
           render={({ field }) => (
             <DatePicker
-              label="Due Date"
+              label="Due Date*"
               value={field.value}
               onChange={(newValue) => field.onChange(newValue)}
               slotProps={{
