@@ -36,9 +36,12 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
         <Link to="/" className={styles.navLink}>
           Home
         </Link>
-        <Link to="/dashboard" className={styles.navLink}>
-          Dashboard
-        </Link>
+        {isLoggedIn ? (
+          <Link to="/dashboard" className={styles.navLink}>
+            Dashboard
+          </Link>) :
+          ('')
+        }
       </div>
 
       <div className={`${styles.navLinks} ${styles.desktopOnly}`}>

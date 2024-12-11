@@ -86,7 +86,6 @@ This core CRUD functionality empowers users to efficiently manage their tasks, p
     <img src="readmeassets/wireframetasks.png" width=600>
 </p>
 
----
 
 ### Colors
 The application follows a clean and modern color scheme, designed for simplicity and accessibility:
@@ -104,6 +103,8 @@ The application follows a clean and modern color scheme, designed for simplicity
 | Highlight Contrast   | `#6c7c2c`  | ![#6c7c2c](https://via.placeholder.com/15/6c7c2c/6c7c2c.png) |
 | Tertiary Background  | `#746c76`  | ![#746c76](https://via.placeholder.com/15/746c76/746c76.png) |
 
+
+
 ### Fonts
 - **Body Font**: Arial for content and UI clarity.
 - **Enhance Font**: Lora (Italic) for hero sections and inspirational text.
@@ -113,10 +114,14 @@ The application follows a clean and modern color scheme, designed for simplicity
 ## Core Pages
 
 ### Landing Page
-A visually appealing introduction to TaskNest app with:
-- Hero section featuring the tagline "Never Miss a Task."
-- Highlighted features presented in cards with rounded edges.
-- Testimonials and engaging call-to-action elements.
+- **Relevant User Story**:
+  - *As a user, I want to understand the purpose of the application when I visit the homepage, so I can decide whether to register or log in.*
+- **Features**:
+  - Introductory content about the app.
+  - Navigation options for registering or logging in.
+  - Hero section featuring catchphrases.
+  - Highlighted features presented in cards with rounded edges.
+  - Testimonials and engaging call-to-action elements.
 
 <p align="center">
     <img src="readmeassets/landing.png" width=500>
@@ -125,9 +130,13 @@ A visually appealing introduction to TaskNest app with:
 ---
 
 ### Registration Page
-A simple form allowing users to create an account with:
-- Real-time validation for passwords and email uniqueness.
-- Intuitive error/success indicators.
+- **Relevant User Story**:
+  - *As a user, I want to register with my email and password, so I can create an account to access the application.*
+- **Features**:
+  - A simple form allowing users to create an account.
+  - Real-time validation for passwords and email uniqueness.
+  - Intuitive error/success indicators.
+  - Snackbar notifications for registration success or failure.
 
 <p align="center">
     <img src="readmeassets/register.png" width=500>
@@ -136,9 +145,12 @@ A simple form allowing users to create an account with:
 ---
 
 ### Login Page
-A quick and secure login experience featuring:
-- Smooth transitions and responsive design.
-- Error handling with user-friendly notifications.
+- **Relevant User Story**:
+  - *As a user, I want to log in with my email and password, so I can access my account and tasks.*
+- **Features**:
+  - A quick and secure login experience.
+  - Smooth transitions and responsive design.
+  - Error handling with user-friendly notifications.
 
 <p align="center">
     <img src="readmeassets/login.png" width=500>
@@ -147,13 +159,39 @@ A quick and secure login experience featuring:
 ---
 
 ### Dashboard
-The central hub for managing tasks:
-- View, edit, and delete tasks.
-- Includes Task filtering
+- **Relevant User Stories**:
+  - *As a user, I want to view all my tasks, so I can manage them efficiently.*
+  - *As a user, I want to filter tasks by priority and state, so I can focus on specific tasks.*
+  - *As a user, I want to paginate tasks, so I can navigate through a large number of them.*
+  - *As a user, I want to delete or mark a task as completed, so I can update its status.*
+- **Features**:
+  - The central hub for managing tasks:
+    - View, edit, and delete tasks.
+    - Task filtering by priority and state.
+    - Pagination for navigating tasks.
+  - Confirmation dialog for destructive actions (delete/mark as complete).
+  - Snackbar notifications for actions like deletion or completion.
 
 <p align="center">
     <img src="" width=500>
 </p>
+
+---
+
+### Task Detail Page
+- **Relevant User Story**:
+  - *As a user, I want to view the details of a task, so I can see its description, due date, and other properties.*
+- **Features**:
+  - Displays detailed information about a specific task.
+  - Buttons for updating or deleting the task.
+  - Visual cues for overdue tasks.
+
+<p align="center">
+    <img src="readmeassets/task-detail.png" width=500>
+</p>
+
+For more information regarding the User Stories, please see the GitHub project board:
+![GitHub Board](https://github.com/users/BrrunaRibeiro/projects/4)
 
 ---
 
