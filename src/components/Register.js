@@ -17,9 +17,12 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  // Dynamically use the base URL from axiosConfig
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/';
+
   const checkEmail = async (email) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/check-email/?email=${email}`);
+      const response = await fetch(`${apiBaseUrl}check-email/?email=${email}`);
       if (response.ok) {
         const data = await response.json();
         if (data.email_exists) {
