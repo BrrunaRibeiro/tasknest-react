@@ -64,10 +64,12 @@ const Dashboard = () => {
 
   // Handle pagination updates
   const handlePageChange = (newPage) => {
-    setPagination((prev) => ({
-      ...prev,
-      page: newPage,
-    }));
+    if (newPage > 0 && newPage <= pagination.totalPages) {
+      setPagination((prev) => ({
+        ...prev,
+        page: newPage,
+      }));
+    }
   };
 
   if (loading) {
