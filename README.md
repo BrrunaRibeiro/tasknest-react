@@ -88,7 +88,7 @@ This core CRUD functionality empowers users to efficiently manage their tasks, p
 
 
 ### Colors
-The application follows a clean and modern color scheme, designed for simplicity and accessibility:
+The application follows a clean and modern color scheme, featuring calm colors designed for simplicity:
 
 | Purpose              | Color Code | Example Color                        |
 |----------------------|------------|--------------------------------------|
@@ -106,7 +106,7 @@ The application follows a clean and modern color scheme, designed for simplicity
 
 
 ### Fonts
-- **Body Font**: Arial for content and UI clarity.
+- **Body Font**: Arial for content and UI clarity. 
 - **Enhance Font**: Lora (Italic) for hero sections and inspirational text.
 
 ---
@@ -187,11 +187,11 @@ The application follows a clean and modern color scheme, designed for simplicity
   - Visual cues for overdue tasks.
 
 <p align="center">
-    <img src="readmeassets/task-detail.png" width=500>
+    <img src="readmeassets/taskdetail.png" width=500>
 </p>
 
 For more information regarding the User Stories, please see the GitHub project board:
-![GitHub Board](https://github.com/users/BrrunaRibeiro/projects/4)
+[GitHub Board](https://github.com/users/BrrunaRibeiro/projects/4)
 
 ---
 
@@ -237,7 +237,7 @@ The application uses React state hooks for:
 - **File Location**: `src/components/TaskList.js`
 - **Description**: Displays a list of tasks with filtering and pagination functionality.
 - **Features**:
-  - Dynamic task rendering with filters like `priority`, `state`, and `category`.
+  - Dynamic task rendering with filters like `priority` and `state`.
   - Integrated pagination for large task datasets.
   - Includes action buttons for "Delete" and "Mark as Completed".
 
@@ -264,7 +264,22 @@ Please refer to [TESTING.md](testing.md) file for all testing carried out.
 
 ## Deployment
 
+To deploy to Heroku, follow these steps:
 
+- Fork or clone this repository in GitHub.
+- If you have also cloned and deployed your own version of the TribeHub Django Rest Framework API, you will need to ensure the value of `axiosConfig.baseURL` in `src/api/axiosConfig.js` is set to the base URL for your API. Pull to your local development environment and push back to GitHub if necessary; otherwise, leave as is to use the original TribeHub API.
+- Log in to Heroku.
+- Select 'Create new app' from the 'New' menu at the top right.
+- Enter a name for the app and select the appropriate region.
+- Select 'Create app'.
+- Select the 'Deploy' tab at the top.
+- Select 'GitHub' from the deployment method options to confirm you wish to deploy using GitHub. You may be asked to enter your GitHub password.
+- Find the 'Connect to GitHub' section and use the search box to locate your repo.
+- Select 'Connect' when found.
+- Optionally choose the main branch under 'Automatic Deploys' and select 'Enable Automatic Deploys' if you wish your deployed site to be automatically redeployed every time you push changes to GitHub.
+- Find the 'Manual Deploy' section, choose 'main' as the branch to deploy and select 'Deploy Branch'.
+
+When deployment is complete, you will be given a link to the deployed site.
 
 ---
 
