@@ -59,7 +59,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
             <Link to="/create-task" className={styles.button}>
               + Add Task
             </Link>
-            <IconButton onClick={handleAvatarClick}>
+            <IconButton onClick={handleAvatarClick} aria-label="Profile/Dropdown menu">
               <Avatar src="/path/to/default-avatar.png" />
             </IconButton>
             <Menu
