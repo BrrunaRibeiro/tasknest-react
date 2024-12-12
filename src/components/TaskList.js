@@ -43,7 +43,7 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange, on
           >
             <MenuItem value="">All States</MenuItem>
             <MenuItem value="open">Open</MenuItem>
-            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="done">Completed</MenuItem>
           </Select>
         </FormControl>
       </Box>

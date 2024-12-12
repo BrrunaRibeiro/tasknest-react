@@ -83,16 +83,17 @@ const Dashboard = () => {
   const handleMarkComplete = async () => {
     if (!selectedTask) return;
     try {
-      const response = await api.patch(`/tasks/${selectedTask.id}/`, { state: 'completed' });
+      const response = await api.patch(`/tasks/${selectedTask.id}/`, { state: 'done' });
       if (response.status === 200) {
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
-            task.id === selectedTask.id ? { ...task, state: 'completed' } : task
+            task.id === selectedTask.id ? { ...task, state: 'done' } : task
           )
         ); // Update task locally
         setSnackbarMessage('Task marked as completed!');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
+        fetchTasks(); // Refresh the task list after update
       }
     } catch (err) {
       console.error('Failed to mark task as complete:', err);
