@@ -59,7 +59,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
             <Link to="/create-task" className={styles.button}>
               + Add Task
             </Link>
-            <IconButton onClick={handleAvatarClick} aria-label="Profile/Dropdown menu">
+            <IconButton onClick={handleAvatarClick} aria-label="Profile/Dropdown menu" title="Profile/Dropdown menu">
               <Avatar src="/path/to/default-avatar.png" />
             </IconButton>
             <Menu
@@ -82,7 +82,7 @@ const NavBar = ({ isLoggedIn, user, onLogout }) => {
         )}
       </div>
 
-      <div className={`${styles.hamburgerMenu} ${styles.mobileOnly}`}>
+      <div className={`${styles.hamburgerMenu} ${styles.mobileOnly}`} aria-label="Profile/Dropdown menu" title="Profile/Dropdown menu">
         <IconButton onClick={toggleDropdown}>
           <MenuIcon />
         </IconButton>
