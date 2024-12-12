@@ -53,12 +53,23 @@ const TaskCreate = () => {
   // Load categories
   const loadCategories = async () => {
     try {
-      const response = await api.get('/categories/');
-      setCategories(Array.isArray(response.data.results) ? response.data.results : []);
+      let allCategories = [];
+      let url = '/categories/';
+      while (url) {
+        const response = await api.get(url);
+        const { results, next } = response.data;
+        allCategories = [...allCategories, ...results];
+        url = next; // Continue to the next page if available
+      }
+      setCategories(allCategories);
     } catch (err) {
       console.error('Failed to load categories:', err);
+      setSnackbarMessage('Failed to load categories.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
+
 
   useEffect(() => {
     loadCategories();
@@ -118,14 +129,16 @@ const TaskCreate = () => {
       if (dueDateISO) formData.append('due_date', dueDateISO);
       formData.append('priority', data.priority);
       if (data.category_id) formData.append('category', data.category_id);
-      if (data.attachment && data.attachment[0]) {
+
+      // Add the attachment (directly from React Hook Form)
+      if (data.attachment && data.attachment.length > 0) {
         formData.append('attachment', data.attachment[0]);
       }
 
       const response = await api.post('/create-task/', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       if (response.status === 201) {
@@ -135,11 +148,8 @@ const TaskCreate = () => {
         navigate('/dashboard', { state: { refresh: true } });
       }
     } catch (error) {
-      if (error.response) {
-        setError(error.response.data.error || 'Failed to create task. Please try again.');
-      } else {
-        setError('An error occurred. Please try again.');
-      }
+      console.error('Failed to create task:', error);
+      setError('An error occurred. Please try again.');
       setSnackbarMessage('Failed to create task. Please try again.');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
@@ -147,6 +157,7 @@ const TaskCreate = () => {
       setIsLoading(false);
     }
   };
+
 
   return (
     <Box className={styles.container}>
@@ -250,9 +261,8 @@ const TaskCreate = () => {
             <input
               id="attachment"
               type="file"
-              hidden
               {...register('attachment')}
-              onChange={handleAttachmentChange}
+              accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             />
             <IconButton component="span">
               <AttachFileIcon />
@@ -264,12 +274,6 @@ const TaskCreate = () => {
               alt="Attachment Preview"
               className={styles.attachmentPreview}
             />
-          )}
-          {attachmentPreview && attachmentPreview.type === 'file' && (
-            <Typography variant="body2" color="textSecondary">
-              File uploaded successfully. <br/>
-              <small>Preview is only available for images with format '.jpeg', '.png', '.webp'.</small>
-            </Typography>
           )}
         </Box>
 

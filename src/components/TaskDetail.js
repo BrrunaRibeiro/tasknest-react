@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import styles from '../styles/TaskDetail.module.css';
 
-import { 
-  Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert, 
-  MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, 
+import {
+  Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert,
+  MenuItem, Dialog, DialogTitle, DialogContent, DialogActions,
   Select, FormControl, InputLabel, IconButton
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
@@ -30,7 +30,6 @@ const TaskDetail = () => {
   const navigate = useNavigate();
 
   const [task, setTask] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [attachmentPreview, setAttachmentPreview] = useState(null);
 
@@ -41,6 +40,7 @@ const TaskDetail = () => {
   const [error, setError] = useState('');
 
   // Category creation dialog states
+  const [categories, setCategories] = useState([]);
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [categoryError, setCategoryError] = useState('');
@@ -84,8 +84,15 @@ const TaskDetail = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await api.get('/categories/');
-      setCategories(Array.isArray(response.data.results) ? response.data.results : []);
+      let allCategories = [];
+      let url = '/categories/';
+      while (url) {
+        const response = await api.get(url);
+        const { results, next } = response.data;
+        allCategories = [...allCategories, ...results];
+        url = next; // Continue to the next page if available
+      }
+      setCategories(allCategories);
     } catch (err) {
       console.error('Failed to load categories:', err);
       setSnackbarMessage('Failed to load categories.');
@@ -93,6 +100,7 @@ const TaskDetail = () => {
       setOpenSnackbar(true);
     }
   };
+  
 
   const handleAttachmentChange = (event) => {
     const file = event.target.files[0];
@@ -170,7 +178,7 @@ const TaskDetail = () => {
       if (response.status === 200) {
         setSnackbarMessage('Task marked as complete!');
         setSnackbarSeverity('success');
-        fetchTaskDetail(); 
+        fetchTaskDetail();
         navigate('/dashboard', { state: { refresh: true } });
       }
     } catch (error) {
@@ -314,13 +322,12 @@ const TaskDetail = () => {
         />
 
         {/* Category Field */}
-        <Box display="flex" alignItems="center" className={styles.input}>
-          <FormControl fullWidth>
+          <FormControl fullWidth className={styles.input}>
             <InputLabel id="category-label">Category</InputLabel>
             <Controller
               name="category_id"
               control={control}
-              defaultValue=""
+              // defaultValue=""
               render={({ field }) => (
                 <Select
                   {...field}
@@ -335,10 +342,13 @@ const TaskDetail = () => {
               )}
             />
           </FormControl>
-          <Button variant="text" color="secondary" onClick={() => setOpenCategoryDialog(true)} style={{ marginLeft: '10px' }}>
+          <Button
+            onClick={() => setOpenCategoryDialog(true)}
+            style={{ backgroundColor: '#aca3d3', color: '#fff', marginLeft: '10px' }}
+            variant="contained"
+          >
             Create Category
           </Button>
-        </Box>
 
         {/* Attachment Field */}
         <Box className={styles.input}>
@@ -352,7 +362,7 @@ const TaskDetail = () => {
             />
             <IconButton component="span">
               <AttachFileIcon />
-            <small>Add an attachment</small>
+              <small>Add an attachment</small>
             </IconButton>
           </label>
           {attachmentPreview && attachmentPreview.type === 'image' && (
@@ -364,7 +374,7 @@ const TaskDetail = () => {
           )}
           {attachmentPreview && attachmentPreview.type === 'file' && (
             <Typography variant="body2" color="textSecondary">
-              File uploaded successfully. <br/>
+              File uploaded successfully. <br />
               <small>Preview is only available for images with format '.jpeg', '.png', '.webp'.</small>
             </Typography>
           )}
@@ -386,18 +396,20 @@ const TaskDetail = () => {
             variant="outlined"
             color="white"
             disabled={isLoading || Object.keys(errors).length > 0}
-            style={{ marginRight: '10px', backgroundColor: '#aca3d3', color:'#fff', border: '1px solid #fff' }}
+            style={{ marginRight: '10px', backgroundColor: '#aca3d3', color: '#fff', border: '1px solid #fff' }}
           >
             {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
           </Button>
-          
+
           <Button
             variant="outlined"
             color="error"
             disabled={isLoading}
             onClick={onDeleteTask}
-            style={{ marginRight: '10px',
-               backgroundColor: '#aca3d3', color:'#fff', border: '1px solid #fff' }}
+            style={{
+              marginRight: '10px',
+              backgroundColor: '#aca3d3', color: '#fff', border: '1px solid #fff'
+            }}
           >
             Delete Task
           </Button>
@@ -442,7 +454,7 @@ const TaskDetail = () => {
           <Button onClick={() => setOpenCategoryDialog(false)} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleCreateCategory} color="primary" variant="contained">
+          <Button onClick={handleCreateCategory} style={{ backgroundColor: '#ccd584', color: '#fff' }}>
             Create
           </Button>
         </DialogActions>
