@@ -96,19 +96,19 @@ const TaskCreate = () => {
     }
   };
 
-  const handleAttachmentChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (validImageTypes.includes(file.type)) {
-        const reader = new FileReader();
-        reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
-        reader.readAsDataURL(file);
-      } else {
-        setAttachmentPreview({ url: null, type: 'file' }); // Non-image file
-      }
-    }
-  };
+  // const handleAttachmentChange = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  //     if (validImageTypes.includes(file.type)) {
+  //       const reader = new FileReader();
+  //       reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
+  //       reader.readAsDataURL(file);
+  //     } else {
+  //       setAttachmentPreview({ url: null, type: 'file' }); // Non-image file
+  //     }
+  //   }
+  // };
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -263,10 +263,24 @@ const TaskCreate = () => {
               type="file"
               {...register('attachment')}
               accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                  if (validImageTypes.includes(file.type)) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      setAttachmentPreview({ url: reader.result, type: 'image' });
+                    };
+                    reader.readAsDataURL(file);
+                  } else {
+                    setAttachmentPreview({ url: null, type: 'file' });
+                  }
+                } else {
+                  setAttachmentPreview(null);
+                }
+              }}
             />
-            <IconButton component="span">
-              <AttachFileIcon />
-            </IconButton>
           </label>
           {attachmentPreview && attachmentPreview.type === 'image' && (
             <img
@@ -274,6 +288,12 @@ const TaskCreate = () => {
               alt="Attachment Preview"
               className={styles.attachmentPreview}
             />
+          )}
+          {attachmentPreview && attachmentPreview.type === 'file' && (
+            <Typography variant="body2" color="textSecondary">
+              File uploaded successfully. <br />
+              <small>Preview is only available for images with format '.jpeg', '.png', '.webp'.</small>
+            </Typography>
           )}
         </Box>
 
