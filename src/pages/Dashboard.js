@@ -33,30 +33,34 @@ const Dashboard = () => {
     try {
       setLoading(true);
       setError(null);
-
-      const params = {
-        page: pagination.page,
-        page_size: pagination.pageSize,
+  
+      let allTasks = [];
+      let url = '/tasks/';
+      let params = {
         ...filters,
       };
+  
       if (!params.priority) delete params.priority;
       if (!params.state) delete params.state;
-
-      const response = await api.get('/tasks/', { params });
-      setTasks(response.data.results); // Assuming 'results' holds task data
-      setPagination((prev) => ({
-        ...prev,
-        totalPages: response.data.total_pages, // Assuming 'total_pages' exists in response
-      }));
+  
+      // Load all tasks across pages
+      while (url) {
+        const response = await api.get(url, { params });
+        const { results, next } = response.data; // Assuming 'results' and 'next' exist in API response
+        allTasks = [...allTasks, ...results];
+        url = next; // Continue to the next page if available
+      }
+  
+      setTasks(allTasks); // Combine all tasks
     } catch (err) {
       console.error('Failed to fetch tasks:', err);
       setError('Failed to fetch tasks. Please check your connection or try again.');
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize, filters]);
-
-  // Handle delete task
+  }, [filters]);
+  
+    // Handle delete task
   const handleDeleteTask = async () => {
     if (!selectedTask) return;
     try {

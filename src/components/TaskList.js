@@ -71,6 +71,7 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange, on
 
                   {/* Mark as Completed Button */}
                   <Button
+                    style={{ backgroundColor: '#6c7c2c', color: '#fff' }}
                     variant="contained"
                     className={styles.markCompletedButton}
                     onClick={() => onMarkComplete(task)}
@@ -82,27 +83,6 @@ const TaskList = ({ tasks, filters, pagination, onFilterChange, onPageChange, on
             ))}
           </List>
         )}
-      </Box>
-
-      {/* Pagination Controls */}
-      <Box className={styles.pagination}>
-        <Button
-          className={styles.paginationButton}
-          disabled={pagination.page <= 1}
-          onClick={() => onPageChange(pagination.page - 1)}
-        >
-          Previous
-        </Button>
-        <Typography variant="body1">
-          Page {pagination.page} of {pagination.totalPages || 1}
-        </Typography>
-        <Button
-          className={styles.paginationButton}
-          disabled={pagination.page >= pagination.totalPages}
-          onClick={() => onPageChange(pagination.page + 1)}
-        >
-          Next
-        </Button>
       </Box>
     </Box>
   );

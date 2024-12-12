@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.css-1dra6gh {
+  height: 100vh;
+  overflow-y: auto;
+  overflow: visible !important; /* Force the override */
+}
