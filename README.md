@@ -162,18 +162,16 @@ The application follows a clean and modern color scheme, featuring calm colors d
 - **Relevant User Stories**:
   - *As a user, I want to view all my tasks, so I can manage them efficiently.*
   - *As a user, I want to filter tasks by priority and state, so I can focus on specific tasks.*
-  - *As a user, I want to paginate tasks, so I can navigate through a large number of them.*
   - *As a user, I want to delete or mark a task as completed, so I can update its status.*
 - **Features**:
   - The central hub for managing tasks:
     - View, edit, and delete tasks.
     - Task filtering by priority and state.
-    - Pagination for navigating tasks.
   - Confirmation dialog for destructive actions (delete/mark as complete).
   - Snackbar notifications for actions like deletion or completion.
 
 <p align="center">
-    <img src="" width=500>
+    <img src="readmeassets/dashboard.png" width=500>
 </p>
 
 ---
@@ -184,7 +182,6 @@ The application follows a clean and modern color scheme, featuring calm colors d
 - **Features**:
   - Displays detailed information about a specific task.
   - Buttons for updating or deleting the task.
-  - Visual cues for overdue tasks.
 
 <p align="center">
     <img src="readmeassets/taskdetail.png" width=500>
@@ -235,10 +232,9 @@ The application uses React state hooks for:
 
 ### 4. **Task List**
 - **File Location**: `src/components/TaskList.js`
-- **Description**: Displays a list of tasks with filtering and pagination functionality.
+- **Description**: Displays a list of tasks with filtering functionality.
 - **Features**:
   - Dynamic task rendering with filters like `priority` and `state`.
-  - Integrated pagination for large task datasets.
   - Includes action buttons for "Delete" and "Mark as Completed".
 
 
