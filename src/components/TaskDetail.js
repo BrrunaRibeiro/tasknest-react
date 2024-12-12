@@ -2,19 +2,16 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import styles from '../styles/TaskDetail.module.css';
-
 import {
   Box, Typography, TextField, Button, CircularProgress, Snackbar, Alert,
   MenuItem, Dialog, DialogTitle, DialogContent, DialogActions,
-  Select, FormControl, InputLabel, IconButton
+  Select, FormControl, InputLabel,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-// import { Dashboard } from '@mui/icons-material';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -63,7 +60,7 @@ const TaskDetail = () => {
     try {
       const response = await api.get(`/tasks/${id}/`);
       setTask(response.data);
-      const { title, description, due_date, priority, category } = response.data;
+      const { title, description, due_date, priority, category, attachment } = response.data;
 
       reset({
         title: title || '',
@@ -71,9 +68,15 @@ const TaskDetail = () => {
         priority: priority || 'medium',
         due_date: due_date ? new Date(due_date) : null,
         category_id: category ? category.id : '',
-        attachment: null
+        attachment: null,
       });
 
+      // If attachment exists, set it as the preview
+      if (attachment) {
+        setAttachmentPreview({ url: attachment, type: 'image' }); // Assuming the attachment is an image
+      } else {
+        setAttachmentPreview(null);
+      }
     } catch (error) {
       console.error('Failed to fetch task details:', error);
       setSnackbarMessage('Failed to fetch task details.');
@@ -81,6 +84,7 @@ const TaskDetail = () => {
       setOpenSnackbar(true);
     }
   }, [id, reset]);
+
 
   const loadCategories = async () => {
     try {
@@ -100,21 +104,21 @@ const TaskDetail = () => {
       setOpenSnackbar(true);
     }
   };
-  
 
-  const handleAttachmentChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (validImageTypes.includes(file.type)) {
-        const reader = new FileReader();
-        reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
-        reader.readAsDataURL(file);
-      } else {
-        setAttachmentPreview({ url: null, type: 'file' }); // Non-image file
-      }
-    }
-  };
+
+  // const handleAttachmentChange = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  //     if (validImageTypes.includes(file.type)) {
+  //       const reader = new FileReader();
+  //       reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
+  //       reader.readAsDataURL(file);
+  //     } else {
+  //       setAttachmentPreview({ url: null, type: 'file' }); // Non-image file
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     fetchTaskDetail();
@@ -126,55 +130,60 @@ const TaskDetail = () => {
     setIsLoading(true);
     setError('');
     try {
-      let chosenDate = data.due_date;
-      if (chosenDate instanceof Date) {
-        const chosenMidnight = new Date(chosenDate.getFullYear(), chosenDate.getMonth(), chosenDate.getDate());
-        if (chosenMidnight.getTime() === today.getTime()) {
-          // If user picked today, set the time to end of day
-          chosenDate.setHours(23, 59, 59, 999);
+        let chosenDate = data.due_date;
+        if (chosenDate instanceof Date) {
+            const chosenMidnight = new Date(chosenDate.getFullYear(), chosenDate.getMonth(), chosenDate.getDate());
+            if (chosenMidnight.getTime() === today.getTime()) {
+                // If user picked today, set the time to end of day
+                chosenDate.setHours(23, 59, 59, 999);
+            }
+            chosenDate = chosenDate.toISOString();
         }
-        chosenDate = chosenDate.toISOString();
-      }
 
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('description', data.description);
-      if (chosenDate) formData.append('due_date', chosenDate);
-      formData.append('priority', data.priority);
-      if (data.category_id) formData.append('category', data.category_id);
-      if (data.attachment && data.attachment[0]) {
-        formData.append('attachment', data.attachment[0]);
-      }
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        if (chosenDate) formData.append('due_date', chosenDate);
+        formData.append('priority', data.priority);
 
-      const response = await api.patch(`/tasks/${id}/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+        // Use `category_id` instead of `category`
+        if (data.category_id) formData.append('category_id', data.category_id);
+
+        if (data.attachment && data.attachment[0]) {
+            formData.append('attachment', data.attachment[0]);
         }
-      });
 
-      if (response.status === 200) {
-        setSnackbarMessage('Task updated successfully!');
-        setSnackbarSeverity('success');
-        setOpenSnackbar(true);
-        // Refresh the task details after update
-        fetchTaskDetail();
-        navigate('/dashboard', { state: { refresh: true } });
-      }
+        const response = await api.patch(`/tasks/${id}/`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        if (response.status === 200) {
+            setSnackbarMessage('Task updated successfully!');
+            setSnackbarSeverity('success');
+            setOpenSnackbar(true);
+            // Refresh the task details after update
+            fetchTaskDetail();
+            navigate('/dashboard', { state: { refresh: true } });
+        }
     } catch (error) {
-      console.error('Failed to update task:', error);
-      setError('Failed to update task. Please try again.');
-      setSnackbarMessage('Failed to update task. Please try again.');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
+        console.error('Failed to update task:', error);
+        setError('Failed to update task. Please try again.');
+        setSnackbarMessage('Failed to update task. Please try again.');
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
+
+
 
   const handleMarkAsComplete = async () => {
     setIsLoading(true);
     try {
-      const response = await api.patch(`/tasks/${id}/`, { state: 'completed' });
+      const response = await api.patch(`/tasks/${id}/`, { state: 'done' });
       if (response.status === 200) {
         setSnackbarMessage('Task marked as complete!');
         setSnackbarSeverity('success');
@@ -322,33 +331,31 @@ const TaskDetail = () => {
         />
 
         {/* Category Field */}
-          <FormControl fullWidth className={styles.input}>
-            <InputLabel id="category-label">Category</InputLabel>
-            <Controller
-              name="category_id"
-              control={control}
-              // defaultValue=""
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="category-label"
-                  label="Category"
-                >
-                  <MenuItem value="">None</MenuItem>
-                  {categories.map(cat => (
-                    <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </FormControl>
-          <Button
-            onClick={() => setOpenCategoryDialog(true)}
-            style={{ backgroundColor: '#aca3d3', color: '#fff', marginLeft: '10px' }}
-            variant="contained"
-          >
-            Create Category
-          </Button>
+        <FormControl fullWidth className={styles.input}>
+          <InputLabel id="category-label">Category</InputLabel>
+          <Controller
+            name="category_id"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field} labelId="category-label" label="Category">
+                <MenuItem value="">None</MenuItem>
+                {categories.map((cat) => (
+                  <MenuItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          />
+        </FormControl>
+        <Button
+          onClick={() => setOpenCategoryDialog(true)}
+          style={{ backgroundColor: '#aca3d3', color: '#fff', marginLeft: '10px' }}
+          variant="contained"
+        >
+          Create Category
+        </Button>
 
         {/* Attachment Field */}
         <Box className={styles.input}>
@@ -356,14 +363,24 @@ const TaskDetail = () => {
             <input
               id="attachment"
               type="file"
-              hidden
               {...register('attachment')}
-              onChange={handleAttachmentChange}
+              accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                  if (validImageTypes.includes(file.type)) {
+                    const reader = new FileReader();
+                    reader.onload = () => setAttachmentPreview({ url: reader.result, type: 'image' });
+                    reader.readAsDataURL(file);
+                  } else {
+                    setAttachmentPreview({ url: null, type: 'file' });
+                  }
+                } else {
+                  setAttachmentPreview(null);
+                }
+              }}
             />
-            <IconButton component="span">
-              <AttachFileIcon />
-              <small>Add an attachment</small>
-            </IconButton>
           </label>
           {attachmentPreview && attachmentPreview.type === 'image' && (
             <img
@@ -378,7 +395,15 @@ const TaskDetail = () => {
               <small>Preview is only available for images with format '.jpeg', '.png', '.webp'.</small>
             </Typography>
           )}
+          {!attachmentPreview && task?.attachment && (
+            <img
+              src={task.attachment}
+              alt="Current Attachment"
+              className={styles.attachmentPreview}
+            />
+          )}
         </Box>
+
 
         {/* Actions */}
         <Box className={styles.actions}>
